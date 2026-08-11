@@ -8,9 +8,13 @@ class DogModel {
     required this.ageInMonths,
     required this.imageUrl,
     required this.story,
+    required this.silverPrice,
+    required this.goldPrice,
     this.careTag,
     this.personalityTags = const [],
     this.sex,
+    this.silverProductId,
+    this.goldProductId,
   });
 
   final String id;
@@ -22,6 +26,10 @@ class DogModel {
   final String? careTag;
   final List<String> personalityTags;
   final String? sex;
+  final double silverPrice;
+  final double goldPrice;
+  final String? silverProductId;
+  final String? goldProductId;
 
   factory DogModel.fromJson(Map<String, dynamic> json) => DogModel(
         id: json['id'] as String,
@@ -36,6 +44,10 @@ class DogModel {
                 .toList() ??
             const [],
         sex: json['sex'] as String?,
+        silverPrice: (json['silver_price'] as num).toDouble(),
+        goldPrice: (json['gold_price'] as num).toDouble(),
+        silverProductId: json['silver_product_id'] as String?,
+        goldProductId: json['gold_product_id'] as String?,
       );
 
   Dog toEntity() => Dog(
@@ -48,5 +60,9 @@ class DogModel {
         careTag: careTag,
         personalityTags: personalityTags,
         sex: sex,
+        silverPrice: silverPrice,
+        goldPrice: goldPrice,
+        silverProductId: silverProductId,
+        goldProductId: goldProductId,
       );
 }

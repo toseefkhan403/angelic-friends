@@ -1,65 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/entities/dog.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_update_highlight.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/entities/onboarding_slide.dart';
+import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/hero_slide.dart';
+import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/letter_slide.dart';
+import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/marquee_name_capture_slide.dart';
+import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/who_these_dogs_slide.dart';
 
+/// Dispatches to the right layout for [slide.slideType]. Each layout is a
+/// distinct template (hero image, dog marquee, letter card, update marquee
+/// + name field) rather than one generic image/title/subtitle shape.
 class OnboardingSlideView extends StatelessWidget {
-  const OnboardingSlideView({required this.slide, this.trailing, super.key});
+  const OnboardingSlideView({
+    required this.slide,
+    required this.isActive,
+    required this.featuredDogs,
+    required this.updateHighlights,
+    required this.nameController,
+    required this.onNameChanged,
+    super.key,
+  });
 
   final OnboardingSlide slide;
-  final Widget? trailing;
+  final bool isActive;
+  final List<Dog> featuredDogs;
+  final List<DogUpdateHighlight> updateHighlights;
+  final TextEditingController nameController;
+  final ValueChanged<String> onNameChanged;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final imageHeight = MediaQuery.of(context).size.height * 0.5;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(
-          height: imageHeight,
-          width: double.infinity,
-          child: Image.network(
-            slide.imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              color: theme.colorScheme.primaryContainer,
-              child: Icon(
-                LucideIcons.image,
-                size: 96,
-                color: theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
-          ),
+    return switch (slide.slideType) {
+      OnboardingSlideType.hero => HeroSlide(slide: slide),
+      OnboardingSlideType.whoTheseDogs => WhoTheseDogsSlide(slide: slide, dogs: featuredDogs),
+      OnboardingSlideType.letter => LetterSlide(
+          slide: slide,
+          highlights: updateHighlights,
+          isActive: isActive,
         ),
-        const SizedBox(height: AppSpacing.md),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(slide.title, style: theme.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    slide.subtitle,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  if (trailing != null) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    trailing!,
-                  ],
-                ],
-              ),
-            ),
-          ),
+      OnboardingSlideType.marqueeNameCapture => MarqueeNameCaptureSlide(
+          slide: slide,
+          highlights: updateHighlights,
+          nameController: nameController,
+          onNameChanged: onNameChanged,
         ),
-      ],
-    );
+    };
   }
 }

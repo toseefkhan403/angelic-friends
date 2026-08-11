@@ -66,9 +66,19 @@ dependencies:
   # Opening external links (e.g. Google Maps for a shelter's location)
   url_launcher: ^6.3.1
 
-  # Firebase (Analytics only — backend is Supabase)
+  # Firebase (Analytics + Crashlytics — backend is Supabase)
   firebase_core: ^4.1.1
   firebase_analytics: ^12.1.1
+  firebase_crashlytics: ^5.2.7
+
+  # Dog detail gallery video playback
+  video_player: ^2.13.0
+
+  # RevenueCat SDK (Silver/Gold sponsorship paywalls)
+  purchases_flutter: ^10.8.0
+
+  # Disk-caches remote images so repeat views don't re-download
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

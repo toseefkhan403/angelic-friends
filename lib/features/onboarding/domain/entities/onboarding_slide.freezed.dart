@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OnboardingSlide {
 
- String get title; String get subtitle; String get imageUrl;
+ OnboardingSlideType get slideType; String get title; String get subtitle; String? get imageUrl; String? get eyebrow;
 /// Create a copy of OnboardingSlide
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $OnboardingSlideCopyWith<OnboardingSlide> get copyWith => _$OnboardingSlideCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSlide&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSlide&&(identical(other.slideType, slideType) || other.slideType == slideType)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.eyebrow, eyebrow) || other.eyebrow == eyebrow));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,subtitle,imageUrl);
+int get hashCode => Object.hash(runtimeType,slideType,title,subtitle,imageUrl,eyebrow);
 
 @override
 String toString() {
-  return 'OnboardingSlide(title: $title, subtitle: $subtitle, imageUrl: $imageUrl)';
+  return 'OnboardingSlide(slideType: $slideType, title: $title, subtitle: $subtitle, imageUrl: $imageUrl, eyebrow: $eyebrow)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $OnboardingSlideCopyWith<$Res>  {
   factory $OnboardingSlideCopyWith(OnboardingSlide value, $Res Function(OnboardingSlide) _then) = _$OnboardingSlideCopyWithImpl;
 @useResult
 $Res call({
- String title, String subtitle, String imageUrl
+ OnboardingSlideType slideType, String title, String subtitle, String? imageUrl, String? eyebrow
 });
 
 
@@ -62,12 +62,14 @@ class _$OnboardingSlideCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingSlide
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? subtitle = null,Object? imageUrl = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? slideType = null,Object? title = null,Object? subtitle = null,Object? imageUrl = freezed,Object? eyebrow = freezed,}) {
   return _then(_self.copyWith(
-title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+slideType: null == slideType ? _self.slideType : slideType // ignore: cast_nullable_to_non_nullable
+as OnboardingSlideType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
-as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,eyebrow: freezed == eyebrow ? _self.eyebrow : eyebrow // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -152,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String subtitle,  String imageUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OnboardingSlideType slideType,  String title,  String subtitle,  String? imageUrl,  String? eyebrow)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingSlide() when $default != null:
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   return orElse();
 
 }
@@ -173,10 +175,10 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String subtitle,  String imageUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OnboardingSlideType slideType,  String title,  String subtitle,  String? imageUrl,  String? eyebrow)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSlide():
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +195,10 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String subtitle,  String imageUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OnboardingSlideType slideType,  String title,  String subtitle,  String? imageUrl,  String? eyebrow)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSlide() when $default != null:
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   return null;
 
 }
@@ -208,12 +210,14 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 
 
 class _OnboardingSlide implements OnboardingSlide {
-  const _OnboardingSlide({required this.title, required this.subtitle, required this.imageUrl});
+  const _OnboardingSlide({required this.slideType, required this.title, required this.subtitle, this.imageUrl, this.eyebrow});
   
 
+@override final  OnboardingSlideType slideType;
 @override final  String title;
 @override final  String subtitle;
-@override final  String imageUrl;
+@override final  String? imageUrl;
+@override final  String? eyebrow;
 
 /// Create a copy of OnboardingSlide
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +229,16 @@ _$OnboardingSlideCopyWith<_OnboardingSlide> get copyWith => __$OnboardingSlideCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSlide&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSlide&&(identical(other.slideType, slideType) || other.slideType == slideType)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.eyebrow, eyebrow) || other.eyebrow == eyebrow));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,subtitle,imageUrl);
+int get hashCode => Object.hash(runtimeType,slideType,title,subtitle,imageUrl,eyebrow);
 
 @override
 String toString() {
-  return 'OnboardingSlide(title: $title, subtitle: $subtitle, imageUrl: $imageUrl)';
+  return 'OnboardingSlide(slideType: $slideType, title: $title, subtitle: $subtitle, imageUrl: $imageUrl, eyebrow: $eyebrow)';
 }
 
 
@@ -245,7 +249,7 @@ abstract mixin class _$OnboardingSlideCopyWith<$Res> implements $OnboardingSlide
   factory _$OnboardingSlideCopyWith(_OnboardingSlide value, $Res Function(_OnboardingSlide) _then) = __$OnboardingSlideCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String subtitle, String imageUrl
+ OnboardingSlideType slideType, String title, String subtitle, String? imageUrl, String? eyebrow
 });
 
 
@@ -262,12 +266,14 @@ class __$OnboardingSlideCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingSlide
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? subtitle = null,Object? imageUrl = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? slideType = null,Object? title = null,Object? subtitle = null,Object? imageUrl = freezed,Object? eyebrow = freezed,}) {
   return _then(_OnboardingSlide(
-title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+slideType: null == slideType ? _self.slideType : slideType // ignore: cast_nullable_to_non_nullable
+as OnboardingSlideType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
-as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,eyebrow: freezed == eyebrow ? _self.eyebrow : eyebrow // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

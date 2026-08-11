@@ -1,4 +1,5 @@
-import 'package:brutalist_ui/brutalist_ui.dart' show NeoButton, NeoTextField;
+import 'package:brutalist_ui/brutalist_ui.dart' show NeoButton;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sponsor_a_dog/core/analytics/analytics_service.dart';
@@ -7,6 +8,9 @@ import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/navigation/home_shell_page.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
 import 'package:sponsor_a_dog/core/widgets/page_dots_indicator.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/usecases/get_dogs.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/usecases/get_featured_dog_updates.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/usecases/get_onboarding_slides.dart';
 import 'package:sponsor_a_dog/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -20,6 +24,8 @@ class OnboardingIntroPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => OnboardingBloc(
         getOnboardingSlides: GetOnboardingSlides(context.read<OnboardingRepository>()),
+        getDogs: GetDogs(context.read<DogRepository>()),
+        getFeaturedDogUpdates: GetFeaturedDogUpdates(context.read<DogRepository>()),
         authRepository: context.read<AuthRepository>(),
         analytics: context.read<AnalyticsService>(),
       )..add(const OnboardingEvent.started()),
@@ -36,7 +42,10 @@ class _OnboardingView extends StatefulWidget {
 }
 
 class _OnboardingViewState extends State<_OnboardingView> {
-  final _pageController = PageController();
+  // keepPage defaults to true, which restores whatever page was last
+  // reached on any previous visit to this route (e.g. via PageStorage) —
+  // onboarding should always start at slide 0 on a fresh mount instead.
+  final _pageController = PageController(keepPage: false);
   final _nameController = TextEditingController();
   int _currentIndex = 0;
 
@@ -69,7 +78,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
           builder: (context, state) {
             return switch (state.slidesStatus) {
               OnboardingSlidesStatus.loading =>
-                const Center(child: CircularProgressIndicator()),
+                const Center(child: CupertinoActivityIndicator()),
               OnboardingSlidesStatus.failure => ErrorStateView(
                   message: state.slidesErrorMessage ?? 'Something went wrong.',
                   onRetry: () =>
@@ -97,19 +106,14 @@ class _OnboardingViewState extends State<_OnboardingView> {
             itemCount: slides.length,
             onPageChanged: (index) => setState(() => _currentIndex = index),
             itemBuilder: (context, index) {
-              final isLast = index == slides.length - 1;
               return OnboardingSlideView(
                 slide: slides[index],
-                trailing: isLast
-                    ? NeoTextField(
-                        controller: _nameController,
-                        textCapitalization: TextCapitalization.words,
-                        placeholder: 'Your name',
-                        onChanged: (value) => context
-                            .read<OnboardingBloc>()
-                            .add(OnboardingEvent.nameChanged(value)),
-                      )
-                    : null,
+                isActive: index == _currentIndex,
+                featuredDogs: state.featuredDogs,
+                updateHighlights: state.updateHighlights,
+                nameController: _nameController,
+                onNameChanged: (value) =>
+                    context.read<OnboardingBloc>().add(OnboardingEvent.nameChanged(value)),
               );
             },
           ),
@@ -136,7 +140,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CupertinoActivityIndicator(),
                     )
                   : Text(isLastSlide ? 'Get Started' : 'Next'),
             ),

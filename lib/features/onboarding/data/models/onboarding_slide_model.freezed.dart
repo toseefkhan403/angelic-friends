@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OnboardingSlideModel {
 
- String get title; String get subtitle;@JsonKey(name: 'image_url') String get imageUrl;
+@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson) OnboardingSlideType get slideType; String get title; String get subtitle;@JsonKey(name: 'image_url') String? get imageUrl; String? get eyebrow;
 /// Create a copy of OnboardingSlideModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $OnboardingSlideModelCopyWith<OnboardingSlideModel> get copyWith => _$Onboarding
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSlideModel&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSlideModel&&(identical(other.slideType, slideType) || other.slideType == slideType)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.eyebrow, eyebrow) || other.eyebrow == eyebrow));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,subtitle,imageUrl);
+int get hashCode => Object.hash(runtimeType,slideType,title,subtitle,imageUrl,eyebrow);
 
 @override
 String toString() {
-  return 'OnboardingSlideModel(title: $title, subtitle: $subtitle, imageUrl: $imageUrl)';
+  return 'OnboardingSlideModel(slideType: $slideType, title: $title, subtitle: $subtitle, imageUrl: $imageUrl, eyebrow: $eyebrow)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $OnboardingSlideModelCopyWith<$Res>  {
   factory $OnboardingSlideModelCopyWith(OnboardingSlideModel value, $Res Function(OnboardingSlideModel) _then) = _$OnboardingSlideModelCopyWithImpl;
 @useResult
 $Res call({
- String title, String subtitle,@JsonKey(name: 'image_url') String imageUrl
+@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson) OnboardingSlideType slideType, String title, String subtitle,@JsonKey(name: 'image_url') String? imageUrl, String? eyebrow
 });
 
 
@@ -65,12 +65,14 @@ class _$OnboardingSlideModelCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingSlideModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? subtitle = null,Object? imageUrl = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? slideType = null,Object? title = null,Object? subtitle = null,Object? imageUrl = freezed,Object? eyebrow = freezed,}) {
   return _then(_self.copyWith(
-title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+slideType: null == slideType ? _self.slideType : slideType // ignore: cast_nullable_to_non_nullable
+as OnboardingSlideType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
-as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,eyebrow: freezed == eyebrow ? _self.eyebrow : eyebrow // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -155,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String subtitle, @JsonKey(name: 'image_url')  String imageUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson)  OnboardingSlideType slideType,  String title,  String subtitle, @JsonKey(name: 'image_url')  String? imageUrl,  String? eyebrow)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingSlideModel() when $default != null:
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   return orElse();
 
 }
@@ -176,10 +178,10 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String subtitle, @JsonKey(name: 'image_url')  String imageUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson)  OnboardingSlideType slideType,  String title,  String subtitle, @JsonKey(name: 'image_url')  String? imageUrl,  String? eyebrow)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSlideModel():
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +198,10 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String subtitle, @JsonKey(name: 'image_url')  String imageUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson)  OnboardingSlideType slideType,  String title,  String subtitle, @JsonKey(name: 'image_url')  String? imageUrl,  String? eyebrow)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSlideModel() when $default != null:
-return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
+return $default(_that.slideType,_that.title,_that.subtitle,_that.imageUrl,_that.eyebrow);case _:
   return null;
 
 }
@@ -211,12 +213,14 @@ return $default(_that.title,_that.subtitle,_that.imageUrl);case _:
 @JsonSerializable()
 
 class _OnboardingSlideModel extends OnboardingSlideModel {
-  const _OnboardingSlideModel({required this.title, required this.subtitle, @JsonKey(name: 'image_url') required this.imageUrl}): super._();
+  const _OnboardingSlideModel({@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson) required this.slideType, required this.title, required this.subtitle, @JsonKey(name: 'image_url') this.imageUrl, this.eyebrow}): super._();
   factory _OnboardingSlideModel.fromJson(Map<String, dynamic> json) => _$OnboardingSlideModelFromJson(json);
 
+@override@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson) final  OnboardingSlideType slideType;
 @override final  String title;
 @override final  String subtitle;
-@override@JsonKey(name: 'image_url') final  String imageUrl;
+@override@JsonKey(name: 'image_url') final  String? imageUrl;
+@override final  String? eyebrow;
 
 /// Create a copy of OnboardingSlideModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSlideModel&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSlideModel&&(identical(other.slideType, slideType) || other.slideType == slideType)&&(identical(other.title, title) || other.title == title)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.eyebrow, eyebrow) || other.eyebrow == eyebrow));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,subtitle,imageUrl);
+int get hashCode => Object.hash(runtimeType,slideType,title,subtitle,imageUrl,eyebrow);
 
 @override
 String toString() {
-  return 'OnboardingSlideModel(title: $title, subtitle: $subtitle, imageUrl: $imageUrl)';
+  return 'OnboardingSlideModel(slideType: $slideType, title: $title, subtitle: $subtitle, imageUrl: $imageUrl, eyebrow: $eyebrow)';
 }
 
 
@@ -251,7 +255,7 @@ abstract mixin class _$OnboardingSlideModelCopyWith<$Res> implements $Onboarding
   factory _$OnboardingSlideModelCopyWith(_OnboardingSlideModel value, $Res Function(_OnboardingSlideModel) _then) = __$OnboardingSlideModelCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String subtitle,@JsonKey(name: 'image_url') String imageUrl
+@JsonKey(name: 'slide_type', fromJson: _slideTypeFromJson, toJson: _slideTypeToJson) OnboardingSlideType slideType, String title, String subtitle,@JsonKey(name: 'image_url') String? imageUrl, String? eyebrow
 });
 
 
@@ -268,12 +272,14 @@ class __$OnboardingSlideModelCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingSlideModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? subtitle = null,Object? imageUrl = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? slideType = null,Object? title = null,Object? subtitle = null,Object? imageUrl = freezed,Object? eyebrow = freezed,}) {
   return _then(_OnboardingSlideModel(
-title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+slideType: null == slideType ? _self.slideType : slideType // ignore: cast_nullable_to_non_nullable
+as OnboardingSlideType,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast_nullable_to_non_nullable
-as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,eyebrow: freezed == eyebrow ? _self.eyebrow : eyebrow // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -14,7 +14,8 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
   @override
   Future<List<OnboardingSlideModel>> getOnboardingSlides() async {
     try {
-      final rows = await _client.from('onboarding_slides').select().order('sort_order');
+      final rows =
+          await _client.from('onboarding_slides').select().order('sort_order', ascending: true);
       return rows.map(OnboardingSlideModel.fromJson).toList();
     } on PostgrestException catch (e) {
       throw ServerException(e.message);

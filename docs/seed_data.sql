@@ -10,25 +10,30 @@
 
 -- ============================================================
 -- onboarding_slides
+-- Four distinct slide_type templates (see OnboardingSlideView) rather than
+-- one generic image/title/subtitle shape. Fully owned by this script, so
+-- reset via delete + insert rather than upsert-by-id, since ids aren't
+-- referenced anywhere else and the slide set is redesigned wholesale here.
 -- ============================================================
-insert into public.onboarding_slides (id, sort_order, title, subtitle, image_url) values
-  ('a27b37e9-74a1-4f02-843a-e5f6424f69c9', 1,
-   E'Real dogs.\nReal rehab.',
-   'Meet shelter dogs recovering from paralysis, getting a second chance at a full life.',
+delete from public.onboarding_slides;
+
+insert into public.onboarding_slides (sort_order, slide_type, eyebrow, title, subtitle, image_url) values
+  (0, 'hero', null,
+   E'Give a shelter dog\nthe family they never had.',
+   'Your support means real care, real comfort, and real joy — video updates straight from their handler.',
    'https://images.unsplash.com/photo-1517849845537-4d257902861a'),
-  ('13d3c230-6357-4e36-8034-aca67ca3eb1b', 2,
-   E'Sponsor.\nWatch them thrive.',
-   'Your monthly support funds real care — and brings real updates straight from their handler.',
-   'https://images.unsplash.com/photo-1552053831-71594a27632d'),
-  ('0aaf8e9e-42f7-4a3f-b6de-4d47b1257140', 3,
-   E'Ready to be\nsomeone''s angel?',
-   'Meet the dogs waiting for you.',
-   'https://images.unsplash.com/photo-1543466835-00a7907e9de1')
-on conflict (id) do update set
-  sort_order = excluded.sort_order,
-  title = excluded.title,
-  subtitle = excluded.subtitle,
-  image_url = excluded.image_url;
+  (1, 'who_these_dogs', 'Who these dogs are',
+   E'The ones who couldn''t be adopted.\nThe ones who need you most.',
+   'We only list dogs in long-term rehab — seniors, paralysis, amputees. The ones shelters struggle to place at all.',
+   null),
+  (2, 'letter', 'A letter of love',
+   E'From kennel to your inbox\nin 4 easy steps.',
+   'Here''s how it works, step by step.',
+   null),
+  (3, 'marquee_name_capture', 'Real dogs, real rehab',
+   E'Ready to be someone''s\nangelic friend?',
+   'What should we call you?',
+   null);
 
 -- ============================================================
 -- shelters
@@ -52,44 +57,29 @@ on conflict (id) do update set
 -- ============================================================
 insert into public.dogs (
   id, name, breed, age_months, image_url, story, care_tag, personality_tags,
-  status, silver_price, gold_price, sort_order, sex, shelter_id, gallery_image_urls
+  status, silver_price, gold_price, silver_product_id, gold_product_id, sort_order, sex, shelter_id
 ) values
   ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95',
    'Barnaby', 'Golden Mix', 144,
    'https://images.unsplash.com/photo-1517849845537-4d257902861a',
    'Barnaby loves slow walks and endless cuddles. His arthritis means he needs a little extra help with joint supplements and a soft orthopedic bed.',
    'Senior Care', array['Gentle Giant', 'Loves Naps'],
-   'long_term_resident', 12, 20, 0, 'male',
-   '11111111-1111-1111-1111-111111111111',
-   array[
-     'https://images.unsplash.com/photo-1517849845537-4d257902861a',
-     'https://images.unsplash.com/photo-1552053831-71594a27632d',
-     'https://images.unsplash.com/photo-1543466835-00a7907e9de1'
-   ]),
+   'long_term_resident', 12, 20, 'sponsor_barnaby_silver_monthly', 'sponsor_barnaby_gold_monthly', 0, 'male',
+   '11111111-1111-1111-1111-111111111111'),
   ('88903098-0722-4ffe-b388-7d9ae116545d',
    'Pip', 'Terrier Mix', 48,
    'https://images.unsplash.com/photo-1552053831-71594a27632d',
    'Pip doesn''t let his back legs slow him down! He needs sponsors to help maintain his custom wheels and twice-weekly hydrotherapy sessions.',
    'Wheels Needed', array['Speedy', 'Determined'],
-   'active_rehab', 15, 25, 1, 'female',
-   '11111111-1111-1111-1111-111111111111',
-   array[
-     'https://images.unsplash.com/photo-1552053831-71594a27632d',
-     'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
-     'https://images.unsplash.com/photo-1517849845537-4d257902861a'
-   ]),
+   'active_rehab', 15, 25, 'sponsor_pip_silver_monthly', 'sponsor_pip_gold_monthly', 1, 'female',
+   '11111111-1111-1111-1111-111111111111'),
   ('71fb238d-ec55-4e39-8faf-a9f32527ac77',
    'Pugsy', 'Pug', 168,
    'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
    'Pugsy is enjoying his golden days in comfort. Sponsorship helps cover his specialized soft-food diet and daily comfort care.',
    'Hospice Care', array['Snuggle Bug', 'Quiet'],
-   'long_term_resident', 10, 18, 2, 'male',
-   '11111111-1111-1111-1111-111111111111',
-   array[
-     'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
-     'https://images.unsplash.com/photo-1517849845537-4d257902861a',
-     'https://images.unsplash.com/photo-1552053831-71594a27632d'
-   ])
+   'long_term_resident', 10, 18, 'sponsor_pugsy_silver_monthly', 'sponsor_pugsy_gold_monthly', 2, 'male',
+   '11111111-1111-1111-1111-111111111111')
 on conflict (id) do update set
   name = excluded.name,
   breed = excluded.breed,
@@ -101,10 +91,46 @@ on conflict (id) do update set
   status = excluded.status,
   silver_price = excluded.silver_price,
   gold_price = excluded.gold_price,
+  silver_product_id = excluded.silver_product_id,
+  gold_product_id = excluded.gold_product_id,
   sort_order = excluded.sort_order,
   sex = excluded.sex,
-  shelter_id = excluded.shelter_id,
-  gallery_image_urls = excluded.gallery_image_urls;
+  shelter_id = excluded.shelter_id;
+
+-- ============================================================
+-- dog_media (photo/video gallery for Dog Detail + onboarding highlights)
+-- Fully owned by this script, so reset via delete-then-insert like
+-- sponsorship_impacts rather than upsert-by-id.
+--
+-- `caption` is set on exactly one row per dog — those are the rows that
+-- feed onboarding's "letter" and update-marquee slides (see
+-- DogRepository.getFeaturedDogUpdates, which selects `caption is not null`).
+-- Barnaby's video is a placeholder test upload (unrelated footage) — swap
+-- for a real handler video before shipping; captions are sample copy too,
+-- per the "dogs info is sample right now" call.
+-- ============================================================
+delete from public.dog_media
+where dog_id in (
+  'a25708d0-41d2-4c42-bc93-f9a8fd6b7a95',
+  '88903098-0722-4ffe-b388-7d9ae116545d',
+  '71fb238d-ec55-4e39-8faf-a9f32527ac77'
+);
+
+insert into public.dog_media (dog_id, media_type, url, thumbnail_url, sort_order, caption) values
+  ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95', 'image', 'https://images.unsplash.com/photo-1517849845537-4d257902861a', null, 0, null),
+  ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95', 'image', 'https://images.unsplash.com/photo-1552053831-71594a27632d', null, 1, null),
+  ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95', 'image', 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', null, 2, null),
+  ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95', 'video', 'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/barnaby/crazy.mp4', 'https://images.unsplash.com/photo-1517849845537-4d257902861a', 3,
+   'Barnaby napped in the sun for two hours straight. He earned it.'),
+  ('88903098-0722-4ffe-b388-7d9ae116545d', 'image', 'https://images.unsplash.com/photo-1552053831-71594a27632d', null, 0, null),
+  ('88903098-0722-4ffe-b388-7d9ae116545d', 'image', 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', null, 1, null),
+  ('88903098-0722-4ffe-b388-7d9ae116545d', 'image', 'https://images.unsplash.com/photo-1517849845537-4d257902861a', null, 2, null),
+  ('88903098-0722-4ffe-b388-7d9ae116545d', 'video', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 'https://images.unsplash.com/photo-1552053831-71594a27632d', 3,
+   'Pip took ten extra minutes on his walk today. He didn''t want it to end.'),
+  ('71fb238d-ec55-4e39-8faf-a9f32527ac77', 'image', 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', null, 0,
+   'Pugsy finished his whole dinner tonight. First time all week.'),
+  ('71fb238d-ec55-4e39-8faf-a9f32527ac77', 'image', 'https://images.unsplash.com/photo-1517849845537-4d257902861a', null, 1, null),
+  ('71fb238d-ec55-4e39-8faf-a9f32527ac77', 'image', 'https://images.unsplash.com/photo-1552053831-71594a27632d', null, 2, null);
 
 -- ============================================================
 -- promo_tiles

@@ -1,4 +1,6 @@
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoBadge, NeoBox;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
@@ -16,6 +18,10 @@ class ExploreDogCard extends StatelessWidget {
     final theme = Theme.of(context);
     final years = (dog.ageInMonths / 12).round();
 
+    // How far the info card pokes out below the photo's bottom edge; the
+    // rest of the card's height overlaps up into the photo.
+    const protrusion = AppSpacing.md;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -23,32 +29,56 @@ class ExploreDogCard extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: onTap,
-        child: NeoBox(
-          shadowOffset: Offset.zero,
-          padding: EdgeInsets.zero,
-          child: AspectRatio(
-            aspectRatio: 3 / 4,
-            child: Stack(
-              fit: StackFit.expand,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
               children: [
-                Image.network(
-                  dog.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: AppColors.neutralFill,
-                    child: const Icon(LucideIcons.image, size: 48, color: AppColors.bodyGray),
+                NeoBox(
+                  shadowOffset: Offset.zero,
+                  padding: EdgeInsets.zero,
+                  child: AspectRatio(
+                    aspectRatio: 3 / 4,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: dog.imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: AppColors.neutralFill,
+                            child: const Center(
+                              child: CupertinoActivityIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: AppColors.neutralFill,
+                            child: const Icon(
+                              LucideIcons.image,
+                              size: 48,
+                              color: AppColors.bodyGray,
+                            ),
+                          ),
+                        ),
+                        if (dog.careTag != null)
+                          Positioned(
+                            top: AppSpacing.sm,
+                            right: AppSpacing.sm,
+                            child: _Badge(label: dog.careTag!),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                if (dog.careTag != null)
-                  Positioned(
-                    top: AppSpacing.sm,
-                    right: AppSpacing.sm,
-                    child: _Badge(label: dog.careTag!),
-                  ),
+                // Straddles the photo's bottom edge instead of sitting fully
+                // inside it: most of the card overlaps up into the photo,
+                // `protrusion` worth of it hangs below.
                 Positioned(
                   left: AppSpacing.sm,
                   right: AppSpacing.sm,
-                  bottom: AppSpacing.sm,
+                  bottom: -protrusion,
                   child: NeoBox(
                     color: AppColors.ground,
                     padding: const EdgeInsets.symmetric(
@@ -94,7 +124,10 @@ class ExploreDogCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+            // Reserves room for the protruding part of the info card so it
+            // doesn't overlap whatever comes after this card in the feed.
+            const SizedBox(height: protrusion),
+          ],
         ),
       ),
     );

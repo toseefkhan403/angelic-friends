@@ -8,11 +8,17 @@ abstract class DogRemoteDataSource {
   Future<List<PromoTileModel>> getPromoTiles();
 
   /// Returns the raw joined row for a single dog (dog columns plus nested
-  /// `shelters` and `sponsorship_impacts`), so the repository can assemble a
-  /// DogDetail entity. Unlike the other methods here, this doesn't return a
-  /// model because the shape it returns isn't itself a single table's row —
-  /// it's a PostgREST embed of three tables the repository splits back apart.
+  /// `shelters`, `sponsorship_impacts`, and `dog_media`), so the repository
+  /// can assemble a DogDetail entity. Unlike the other methods here, this
+  /// doesn't return a model because the shape it returns isn't itself a
+  /// single table's row — it's a PostgREST embed of four tables the
+  /// repository splits back apart.
   Future<Map<String, dynamic>> getDogDetail(String dogId);
+
+  /// Raw `dog_media` rows with a non-null `caption`, each joined with its
+  /// dog's `name`/`care_tag`, for the repository to assemble into
+  /// `DogUpdateHighlight`s.
+  Future<List<Map<String, dynamic>>> getFeaturedMedia();
 }
 
 class DogRemoteDataSourceImpl implements DogRemoteDataSource {
@@ -23,7 +29,7 @@ class DogRemoteDataSourceImpl implements DogRemoteDataSource {
   @override
   Future<List<DogModel>> getDogs() async {
     try {
-      final rows = await _client.from('dogs').select().order('sort_order');
+      final rows = await _client.from('dogs').select().order('sort_order', ascending: true);
       return rows.map(DogModel.fromJson).toList();
     } on PostgrestException catch (e) {
       throw ServerException(e.message);
@@ -37,7 +43,7 @@ class DogRemoteDataSourceImpl implements DogRemoteDataSource {
           .from('promo_tiles')
           .select()
           .eq('is_active', true)
-          .order('insert_after_index');
+          .order('insert_after_index', ascending: true);
       return rows.map(PromoTileModel.fromJson).toList();
     } on PostgrestException catch (e) {
       throw ServerException(e.message);
@@ -49,10 +55,24 @@ class DogRemoteDataSourceImpl implements DogRemoteDataSource {
     try {
       final row = await _client
           .from('dogs')
-          .select('*, shelters(*), sponsorship_impacts(*)')
+          .select('*, shelters(*), sponsorship_impacts(*), dog_media(*)')
           .eq('id', dogId)
           .single();
       return row;
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getFeaturedMedia() async {
+    try {
+      final rows = await _client
+          .from('dog_media')
+          .select('*, dogs(name, care_tag)')
+          .not('caption', 'is', null)
+          .order('sort_order', ascending: true);
+      return List<Map<String, dynamic>>.from(rows);
     } on PostgrestException catch (e) {
       throw ServerException(e.message);
     }

@@ -1,4 +1,6 @@
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoBox, NeoButton, NeoButtonSize, NeoIconButton;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -6,13 +8,16 @@ import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
 import 'package:sponsor_a_dog/core/utils/url_launcher_util.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
+import 'package:sponsor_a_dog/core/widgets/auto_play_video.dart';
 import 'package:sponsor_a_dog/core/widgets/page_dots_indicator.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/dog.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_detail.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_media.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/shelter.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/usecases/get_dog_detail.dart';
 import 'package:sponsor_a_dog/features/dogs/presentation/bloc/dog_detail_bloc.dart';
+import 'package:sponsor_a_dog/features/paywall/presentation/widgets/sponsor_paywall_sheet.dart';
 
 /// The dog detail screen, reached by tapping a card in the Explore feed.
 ///
@@ -50,7 +55,7 @@ class _DogDetailView extends StatelessWidget {
           return switch (state) {
             DogDetailInitial() || DogDetailLoading() => Stack(
                 children: [
-                  const Center(child: CircularProgressIndicator()),
+                  const Center(child: CupertinoActivityIndicator()),
                   Positioned(
                     top: AppSpacing.md,
                     left: AppSpacing.md,
@@ -90,8 +95,9 @@ class _DogDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrls =
-        detail.galleryImageUrls.isNotEmpty ? detail.galleryImageUrls : [detail.dog.imageUrl];
+    final media = detail.media.isNotEmpty
+        ? detail.media
+        : [DogMedia(mediaType: DogMediaType.image, url: detail.dog.imageUrl)];
 
     return Stack(
       children: [
@@ -99,7 +105,7 @@ class _DogDetailContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _PhotoCarousel(imageUrls: imageUrls),
+              _PhotoCarousel(media: media),
               // Pull the panel up so it overlaps the bottom of the photo, per the
               // reference layout.
               Transform.translate(
@@ -120,9 +126,9 @@ class _DogDetailContent extends StatelessWidget {
 }
 
 class _PhotoCarousel extends StatefulWidget {
-  const _PhotoCarousel({required this.imageUrls});
+  const _PhotoCarousel({required this.media});
 
-  final List<String> imageUrls;
+  final List<DogMedia> media;
 
   @override
   State<_PhotoCarousel> createState() => _PhotoCarouselState();
@@ -147,25 +153,39 @@ class _PhotoCarouselState extends State<_PhotoCarousel> {
         children: [
           PageView.builder(
             controller: _controller,
-            itemCount: widget.imageUrls.length,
+            itemCount: widget.media.length,
             onPageChanged: (index) => setState(() => _currentIndex = index),
-            itemBuilder: (context, index) => Image.network(
-              widget.imageUrls[index],
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: AppColors.neutralFill,
-                child: const Icon(LucideIcons.image, size: 48, color: AppColors.bodyGray),
-              ),
-            ),
+            itemBuilder: (context, index) {
+              final item = widget.media[index];
+              return switch (item.mediaType) {
+                DogMediaType.image => CachedNetworkImage(
+                    imageUrl: item.url,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: AppColors.neutralFill,
+                      child: const Center(child: CupertinoActivityIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: AppColors.neutralFill,
+                      child: const Icon(LucideIcons.image, size: 48, color: AppColors.bodyGray),
+                    ),
+                  ),
+                DogMediaType.video => AutoPlayVideo(
+                    videoUrl: item.url,
+                    thumbnailUrl: item.thumbnailUrl,
+                    isActive: index == _currentIndex,
+                  ),
+              };
+            },
           ),
-          if (widget.imageUrls.length > 1)
+          if (widget.media.length > 1)
             Positioned(
               left: 0,
               right: 0,
               bottom: AppSpacing.md,
               child: Center(
                 child: PageDotsIndicator(
-                  count: widget.imageUrls.length,
+                  count: widget.media.length,
                   currentIndex: _currentIndex,
                 ),
               ),
@@ -291,7 +311,7 @@ class _DetailPanel extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: NeoButton(
-              onPressed: () => _showComingSoon(context),
+              onPressed: () => showSponsorPaywallSheet(context, dog),
               child: Text('Sponsor ${dog.name}'),
             ),
           ),
@@ -364,10 +384,10 @@ class _ShelterRow extends StatelessWidget {
             border: Border.all(color: AppColors.ink, width: 2),
           ),
           child: shelter.logoUrl != null
-              ? Image.network(
-                  shelter.logoUrl!,
+              ? CachedNetworkImage(
+                  imageUrl: shelter.logoUrl!,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
+                  errorWidget: (context, url, error) =>
                       const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),
                 )
               : const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),

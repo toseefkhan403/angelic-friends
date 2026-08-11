@@ -1,15 +1,18 @@
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoTheme;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sponsor_a_dog/core/analytics/analytics_service.dart';
 import 'package:sponsor_a_dog/core/auth/auth_repository.dart';
 import 'package:sponsor_a_dog/core/di/app_dependencies.dart';
 import 'package:sponsor_a_dog/core/navigation/home_shell_page.dart';
+import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/theme/app_neo_theme.dart';
 import 'package:sponsor_a_dog/core/theme/app_theme.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/presentation/pages/onboarding_intro_page.dart';
+import 'package:sponsor_a_dog/features/sponsors/domain/repositories/sponsorship_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SponsorADogApp extends StatelessWidget {
@@ -28,6 +31,10 @@ class SponsorADogApp extends StatelessWidget {
           value: dependencies.onboardingRepository,
         ),
         RepositoryProvider<DogRepository>.value(value: dependencies.dogRepository),
+        RepositoryProvider<PurchasesService>.value(value: dependencies.purchasesService),
+        RepositoryProvider<SponsorshipRepository>.value(
+          value: dependencies.sponsorshipRepository,
+        ),
       ],
       child: MaterialApp(
         title: 'Angelic Friends',
@@ -53,7 +60,7 @@ class _AppRoot extends StatelessWidget {
       stream: authRepository.authStateChanges,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(body: Center(child: CupertinoActivityIndicator()));
         }
         return snapshot.data! ? const HomeShellPage() : const OnboardingIntroPage();
       },

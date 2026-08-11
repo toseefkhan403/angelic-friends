@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -84,7 +85,7 @@ class _ExploreView extends StatelessWidget {
         builder: (context, state) {
           return switch (state) {
             DogListInitial() || DogListLoading() =>
-              const Center(child: CircularProgressIndicator()),
+              const Center(child: CupertinoActivityIndicator()),
             DogListFailure(:final message) => ErrorStateView(
                 message: message,
                 onRetry: () =>

@@ -7,12 +7,18 @@ import 'package:sponsor_a_dog/core/analytics/noop_analytics_service.dart';
 import 'package:sponsor_a_dog/core/auth/auth_repository.dart';
 import 'package:sponsor_a_dog/core/auth/supabase_auth_repository.dart';
 import 'package:sponsor_a_dog/core/network/network_info.dart';
+import 'package:sponsor_a_dog/core/purchases/noop_purchases_service.dart';
+import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
+import 'package:sponsor_a_dog/core/purchases/revenuecat_purchases_service.dart';
 import 'package:sponsor_a_dog/features/dogs/data/datasources/dog_remote_data_source.dart';
 import 'package:sponsor_a_dog/features/dogs/data/repositories/dog_repository_impl.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/data/datasources/onboarding_remote_data_source.dart';
 import 'package:sponsor_a_dog/features/onboarding/data/repositories/onboarding_repository_impl.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:sponsor_a_dog/features/sponsors/data/datasources/sponsorship_remote_data_source.dart';
+import 'package:sponsor_a_dog/features/sponsors/data/repositories/sponsorship_repository_impl.dart';
+import 'package:sponsor_a_dog/features/sponsors/domain/repositories/sponsorship_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Hand-assembled composition root — no service locator. Built once in
@@ -26,6 +32,8 @@ class AppDependencies {
     required this.authRepository,
     required this.onboardingRepository,
     required this.dogRepository,
+    required this.purchasesService,
+    required this.sponsorshipRepository,
   });
 
   final AnalyticsService analytics;
@@ -33,6 +41,8 @@ class AppDependencies {
   final AuthRepository authRepository;
   final OnboardingRepository onboardingRepository;
   final DogRepository dogRepository;
+  final PurchasesService purchasesService;
+  final SponsorshipRepository sponsorshipRepository;
 }
 
 Future<AppDependencies> createAppDependencies() async {
@@ -45,6 +55,14 @@ Future<AppDependencies> createAppDependencies() async {
       ? FirebaseAnalyticsService(FirebaseAnalytics.instance)
       : const NoOpAnalyticsService();
 
+  final supportsPurchases = defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
+  final purchasesService =
+      supportsPurchases ? RevenueCatPurchasesService() : const NoopPurchasesService();
+  if (supportsPurchases) {
+    await purchasesService.initialize(appUserId: supabaseClient.auth.currentUser?.id);
+  }
+
   return AppDependencies(
     analytics: analytics,
     supabaseClient: supabaseClient,
@@ -54,6 +72,11 @@ Future<AppDependencies> createAppDependencies() async {
     ),
     dogRepository: DogRepositoryImpl(
       remoteDataSource: DogRemoteDataSourceImpl(supabaseClient),
+      networkInfo: networkInfo,
+    ),
+    purchasesService: purchasesService,
+    sponsorshipRepository: SponsorshipRepositoryImpl(
+      remoteDataSource: SponsorshipRemoteDataSourceImpl(supabaseClient),
       networkInfo: networkInfo,
     ),
   );
