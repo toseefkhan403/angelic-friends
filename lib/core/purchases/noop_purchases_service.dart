@@ -9,6 +9,9 @@ class NoopPurchasesService implements PurchasesService {
   const NoopPurchasesService();
 
   @override
+  bool get isAvailable => false;
+
+  @override
   Future<void> initialize({String? appUserId}) async {}
 
   @override

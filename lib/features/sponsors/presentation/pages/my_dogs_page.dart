@@ -7,6 +7,7 @@ import 'package:sponsor_a_dog/core/analytics/analytics_service.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
+import 'package:sponsor_a_dog/core/widgets/tab_refresh_listener.dart';
 import 'package:sponsor_a_dog/features/sponsors/domain/entities/sponsorship.dart';
 import 'package:sponsor_a_dog/features/sponsors/domain/repositories/sponsorship_repository.dart';
 import 'package:sponsor_a_dog/features/sponsors/domain/usecases/get_my_sponsorships.dart';
@@ -21,8 +22,13 @@ import 'package:sponsor_a_dog/features/sponsors/presentation/widgets/sponsored_d
 /// appears for a dog with an active sponsorship (see docs/PRODUCT_SPEC.md
 /// §4.8 — chat unlocks with payment, not before).
 class MyDogsPage extends StatelessWidget {
-  const MyDogsPage({this.onExplore, super.key});
+  const MyDogsPage({this.isActive = true, this.onExplore, super.key});
 
+  /// Whether this tab is the one currently visible in the bottom-nav
+  /// `IndexedStack` — when it flips from false to true (the user switching
+  /// back to this tab), the list is refetched so a pledge/purchase made
+  /// elsewhere (e.g. the dog detail page) shows up here too.
+  final bool isActive;
   final VoidCallback? onExplore;
 
   @override
@@ -32,7 +38,12 @@ class MyDogsPage extends StatelessWidget {
       create: (context) => SponsorsBloc(
         getMySponsorships: GetMySponsorships(context.read<SponsorshipRepository>()),
       )..add(const SponsorsFetchRequested()),
-      child: _MyDogsView(onExplore: onExplore),
+      child: TabRefreshListener(
+        isActive: isActive,
+        onActivated: (context) =>
+            context.read<SponsorsBloc>().add(const SponsorsRefreshRequested()),
+        child: _MyDogsView(onExplore: onExplore),
+      ),
     );
   }
 }

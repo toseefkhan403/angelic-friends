@@ -6,6 +6,7 @@ import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_update_highlight
 import 'package:sponsor_a_dog/features/dogs/domain/entities/promo_tile.dart';
 
 abstract class DogRepository {
+  
   Future<Either<Failure, List<Dog>>> getDogs();
   Future<Either<Failure, List<PromoTile>>> getPromoTiles();
   Future<Either<Failure, DogDetail>> getDogDetail(String dogId);

@@ -76,9 +76,16 @@ dependencies:
 
   # RevenueCat SDK (Silver/Gold sponsorship paywalls)
   purchases_flutter: ^10.8.0
+  purchases_ui_flutter: ^10.9.1
 
   # Disk-caches remote images so repeat views don't re-download
   cached_network_image: ^3.4.1
+
+  # Shimmer loading placeholders (dog card image + explore feed skeleton)
+  shimmer: ^4.0.0
+
+  # Confetti burst on the post-sponsorship celebration dialog
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:

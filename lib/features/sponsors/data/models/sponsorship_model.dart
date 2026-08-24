@@ -5,36 +5,26 @@ class SponsorshipModel {
   const SponsorshipModel({
     required this.id,
     required this.dog,
-    required this.tier,
+    required this.credits,
     required this.startedAt,
   });
 
   final String id;
   final DogModel dog;
-  final SponsorshipTier tier;
+  final int credits;
   final DateTime startedAt;
 
   factory SponsorshipModel.fromJson(Map<String, dynamic> json) => SponsorshipModel(
         id: json['id'] as String,
         dog: DogModel.fromJson(json['dogs'] as Map<String, dynamic>),
-        tier: _tierFromJson(json['tier'] as String),
+        credits: (json['credits'] as num).toInt(),
         startedAt: DateTime.parse(json['started_at'] as String),
       );
 
   Sponsorship toEntity() => Sponsorship(
         id: id,
         dog: dog.toEntity(),
-        tier: tier,
+        credits: credits,
         startedAt: startedAt,
       );
 }
-
-SponsorshipTier _tierFromJson(String value) => switch (value) {
-      'gold' => SponsorshipTier.gold,
-      _ => SponsorshipTier.silver,
-    };
-
-String tierToJson(SponsorshipTier tier) => switch (tier) {
-      SponsorshipTier.silver => 'silver',
-      SponsorshipTier.gold => 'gold',
-    };

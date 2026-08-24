@@ -1,10 +1,10 @@
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoBadge, NeoBox;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
+import 'package:sponsor_a_dog/core/widgets/shimmer_loading.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/dog.dart';
 
 class ExploreDogCard extends StatelessWidget {
@@ -47,11 +47,8 @@ class ExploreDogCard extends StatelessWidget {
                         CachedNetworkImage(
                           imageUrl: dog.imageUrl,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: AppColors.neutralFill,
-                            child: const Center(
-                              child: CupertinoActivityIndicator(),
-                            ),
+                          placeholder: (context, url) => const ShimmerLoading(
+                            child: ShimmerBox(),
                           ),
                           errorWidget: (context, url, error) => Container(
                             color: AppColors.neutralFill,
@@ -142,5 +139,72 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeoBadge(child: Text(label));
+  }
+}
+
+/// Skeleton placeholder shaped like [ExploreDogCard], shown while the
+/// initial dog feed is loading (no dogs to render yet). Wrap one or more
+/// of these in a single [ShimmerLoading] so the sweep animates across the
+/// whole skeleton feed together.
+class ExploreDogCardSkeleton extends StatelessWidget {
+  const ExploreDogCardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mirrors the protrusion/overlap layout of ExploreDogCard so the
+    // skeleton takes up the same space as a real card.
+    const protrusion = AppSpacing.md;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              NeoBox(
+                shadowOffset: Offset.zero,
+                padding: EdgeInsets.zero,
+                child: AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: ShimmerBox(),
+                ),
+              ),
+              Positioned(
+                left: AppSpacing.sm,
+                right: AppSpacing.sm,
+                bottom: -protrusion,
+                child: NeoBox(
+                  color: AppColors.ground,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ShimmerBox(width: 110, height: 20),
+                      const SizedBox(height: 6),
+                      const ShimmerBox(width: 160, height: 14),
+                      const SizedBox(height: 6),
+                      const ShimmerBox(width: 200, height: 12),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          // Reserves room for the protruding part of the info card so it
+          // doesn't overlap whatever comes after this card in the feed.
+          const SizedBox(height: protrusion),
+        ],
+      ),
+    );
   }
 }

@@ -8,13 +8,11 @@ class Dog extends Equatable {
     required this.ageInMonths,
     required this.imageUrl,
     required this.story,
-    required this.silverPrice,
-    required this.goldPrice,
+    required this.monthlyFundingGoal,
+    this.fundedCredits = 0,
     this.careTag,
     this.personalityTags = const [],
     this.sex,
-    this.silverProductId,
-    this.goldProductId,
   });
 
   final String id;
@@ -34,22 +32,14 @@ class Dog extends Equatable {
   /// 'male' or 'female', when known. Not every dog has one set.
   final String? sex;
 
-  /// Monthly price, in the store's local currency units, for the Silver
-  /// sponsorship tier for this dog.
-  final double silverPrice;
+  /// This dog's monthly funding goal, in credits ($1 = 1 credit). Defaults
+  /// to 30 for every dog unless overridden.
+  final int monthlyFundingGoal;
 
-  /// Monthly price, in the store's local currency units, for the Gold
-  /// sponsorship tier for this dog.
-  final double goldPrice;
-
-  /// The store (RevenueCat/App Store/Play Store) product id backing the
-  /// Silver tier, e.g. `sponsor_<dog_id>_silver_monthly`. Null until the
-  /// store product has been created for this dog.
-  final String? silverProductId;
-
-  /// The store product id backing the Gold tier. Null until the store
-  /// product has been created for this dog.
-  final String? goldProductId;
+  /// Live sum of credits currently pledged to this dog by all Angels
+  /// (denormalized server-side, kept in sync by a Postgres trigger whenever
+  /// `sponsorships.credits`/`status` changes). Drives the funding meter.
+  final int fundedCredits;
 
   @override
   List<Object?> get props => [
@@ -62,9 +52,7 @@ class Dog extends Equatable {
         careTag,
         personalityTags,
         sex,
-        silverPrice,
-        goldPrice,
-        silverProductId,
-        goldProductId,
+        monthlyFundingGoal,
+        fundedCredits,
       ];
 }

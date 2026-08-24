@@ -9,6 +9,12 @@ import 'package:sponsor_a_dog/core/error/failures.dart';
 /// until real RevenueCat API keys and store products exist, and this must
 /// never crash the app in the meantime.
 abstract class PurchasesService {
+  /// Whether this platform actually supports `purchases_flutter`/
+  /// `purchases_ui_flutter` (Android/iOS only). Callers must check this
+  /// before presenting RevenueCat's native paywall UI — attempting to on an
+  /// unsupported platform throws rather than failing gracefully.
+  bool get isAvailable;
+
   /// Best-effort SDK init; failures are swallowed (logged only) so a
   /// misconfigured paywall never blocks app startup.
   Future<void> initialize({String? appUserId});

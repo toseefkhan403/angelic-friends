@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -7,6 +6,7 @@ import 'package:sponsor_a_dog/core/auth/auth_repository.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
+import 'package:sponsor_a_dog/core/widgets/shimmer_loading.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/dog.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/promo_tile.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
@@ -84,8 +84,7 @@ class _ExploreView extends StatelessWidget {
       body: BlocBuilder<DogListBloc, DogListState>(
         builder: (context, state) {
           return switch (state) {
-            DogListInitial() || DogListLoading() =>
-              const Center(child: CupertinoActivityIndicator()),
+            DogListInitial() || DogListLoading() => const _ExploreFeedSkeleton(),
             DogListFailure(:final message) => ErrorStateView(
                 message: message,
                 onRetry: () =>
@@ -179,6 +178,31 @@ class _ExploreFeed extends StatelessWidget {
               ),
             _ => const SizedBox.shrink(),
           },
+      ],
+    );
+  }
+}
+
+/// Shown in place of the feed while the initial dog list is loading — a
+/// handful of card-shaped shimmer placeholders instead of a bare spinner,
+/// so the page's layout doesn't jump once the real cards arrive.
+class _ExploreFeedSkeleton extends StatelessWidget {
+  const _ExploreFeedSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      children: const [
+        ShimmerLoading(
+          child: Column(
+            children: [
+              ExploreDogCardSkeleton(),
+              ExploreDogCardSkeleton(),
+              ExploreDogCardSkeleton(),
+            ],
+          ),
+        ),
       ],
     );
   }

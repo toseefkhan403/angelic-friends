@@ -10,6 +10,9 @@ import 'package:sponsor_a_dog/core/network/network_info.dart';
 import 'package:sponsor_a_dog/core/purchases/noop_purchases_service.dart';
 import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/purchases/revenuecat_purchases_service.dart';
+import 'package:sponsor_a_dog/features/angel/data/datasources/angel_remote_data_source.dart';
+import 'package:sponsor_a_dog/features/angel/data/repositories/angel_repository_impl.dart';
+import 'package:sponsor_a_dog/features/angel/domain/repositories/angel_repository.dart';
 import 'package:sponsor_a_dog/features/dogs/data/datasources/dog_remote_data_source.dart';
 import 'package:sponsor_a_dog/features/dogs/data/repositories/dog_repository_impl.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
@@ -34,6 +37,7 @@ class AppDependencies {
     required this.dogRepository,
     required this.purchasesService,
     required this.sponsorshipRepository,
+    required this.angelRepository,
   });
 
   final AnalyticsService analytics;
@@ -43,6 +47,7 @@ class AppDependencies {
   final DogRepository dogRepository;
   final PurchasesService purchasesService;
   final SponsorshipRepository sponsorshipRepository;
+  final AngelRepository angelRepository;
 }
 
 Future<AppDependencies> createAppDependencies() async {
@@ -77,6 +82,10 @@ Future<AppDependencies> createAppDependencies() async {
     purchasesService: purchasesService,
     sponsorshipRepository: SponsorshipRepositoryImpl(
       remoteDataSource: SponsorshipRemoteDataSourceImpl(supabaseClient),
+      networkInfo: networkInfo,
+    ),
+    angelRepository: AngelRepositoryImpl(
+      remoteDataSource: AngelRemoteDataSourceImpl(supabaseClient),
       networkInfo: networkInfo,
     ),
   );

@@ -21,7 +21,7 @@ insert into public.onboarding_slides (sort_order, slide_type, eyebrow, title, su
   (0, 'hero', null,
    E'Give a shelter dog\nthe family they never had.',
    'Your support means real care, real comfort, and real joy — video updates straight from their handler.',
-   'https://images.unsplash.com/photo-1517849845537-4d257902861a'),
+   'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/onboarding/hero.png'),
   (1, 'who_these_dogs', 'Who these dogs are',
    E'The ones who couldn''t be adopted.\nThe ones who need you most.',
    'We only list dogs in long-term rehab — seniors, paralysis, amputees. The ones shelters struggle to place at all.',
@@ -57,28 +57,35 @@ on conflict (id) do update set
 -- ============================================================
 insert into public.dogs (
   id, name, breed, age_months, image_url, story, care_tag, personality_tags,
-  status, silver_price, gold_price, silver_product_id, gold_product_id, sort_order, sex, shelter_id
+  status, sort_order, sex, shelter_id
 ) values
   ('a25708d0-41d2-4c42-bc93-f9a8fd6b7a95',
    'Barnaby', 'Golden Mix', 144,
    'https://images.unsplash.com/photo-1517849845537-4d257902861a',
    'Barnaby loves slow walks and endless cuddles. His arthritis means he needs a little extra help with joint supplements and a soft orthopedic bed.',
    'Senior Care', array['Gentle Giant', 'Loves Naps'],
-   'long_term_resident', 12, 20, 'sponsor_barnaby_silver_monthly', 'sponsor_barnaby_gold_monthly', 0, 'male',
+   'long_term_resident', 0, 'male',
    '11111111-1111-1111-1111-111111111111'),
   ('88903098-0722-4ffe-b388-7d9ae116545d',
    'Pip', 'Terrier Mix', 48,
    'https://images.unsplash.com/photo-1552053831-71594a27632d',
    'Pip doesn''t let his back legs slow him down! He needs sponsors to help maintain his custom wheels and twice-weekly hydrotherapy sessions.',
    'Wheels Needed', array['Speedy', 'Determined'],
-   'active_rehab', 15, 25, 'sponsor_pip_silver_monthly', 'sponsor_pip_gold_monthly', 1, 'female',
+   'active_rehab', 1, 'female',
    '11111111-1111-1111-1111-111111111111'),
   ('71fb238d-ec55-4e39-8faf-a9f32527ac77',
    'Pugsy', 'Pug', 168,
    'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
    'Pugsy is enjoying his golden days in comfort. Sponsorship helps cover his specialized soft-food diet and daily comfort care.',
    'Hospice Care', array['Snuggle Bug', 'Quiet'],
-   'long_term_resident', 10, 18, 'sponsor_pugsy_silver_monthly', 'sponsor_pugsy_gold_monthly', 2, 'male',
+   'long_term_resident', 2, 'male',
+   '11111111-1111-1111-1111-111111111111'),
+  ('73eda24d-87be-405a-9852-5d576119f1d5',
+   'Titli', 'Indie Mix', 144,
+   'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/dogs/titli.png',
+   'Titli spent most of her life fending for herself on the streets before she found safety with us. Now in her golden years, she''s calm, watchful, and endlessly gentle — she just needs a soft bed, joint support, and someone patient enough to let her set the pace on her evening walks.',
+   'Senior Care', array[]::text[],
+   'long_term_resident', 3, 'female',
    '11111111-1111-1111-1111-111111111111')
 on conflict (id) do update set
   name = excluded.name,
@@ -89,13 +96,11 @@ on conflict (id) do update set
   care_tag = excluded.care_tag,
   personality_tags = excluded.personality_tags,
   status = excluded.status,
-  silver_price = excluded.silver_price,
-  gold_price = excluded.gold_price,
-  silver_product_id = excluded.silver_product_id,
-  gold_product_id = excluded.gold_product_id,
   sort_order = excluded.sort_order,
   sex = excluded.sex,
   shelter_id = excluded.shelter_id;
+-- monthly_funding_goal defaults to 30 for every dog; set it explicitly here
+-- (or with a follow-up update) if a dog needs a different monthly goal.
 
 -- ============================================================
 -- dog_media (photo/video gallery for Dog Detail + onboarding highlights)
@@ -163,7 +168,8 @@ delete from public.sponsorship_impacts
 where dog_id in (
   'a25708d0-41d2-4c42-bc93-f9a8fd6b7a95',
   '88903098-0722-4ffe-b388-7d9ae116545d',
-  '71fb238d-ec55-4e39-8faf-a9f32527ac77'
+  '71fb238d-ec55-4e39-8faf-a9f32527ac77',
+  '73eda24d-87be-405a-9852-5d576119f1d5'
 );
 
 insert into public.sponsorship_impacts (id, dog_id, icon, description, sort_order) values
@@ -175,4 +181,7 @@ insert into public.sponsorship_impacts (id, dog_id, icon, description, sort_orde
   ('a1000000-0000-0000-0000-000000000006', '88903098-0722-4ffe-b388-7d9ae116545d', 'shield', 'Provides vaccinations and routine vet checkups.', 3),
   ('a1000000-0000-0000-0000-000000000007', '71fb238d-ec55-4e39-8faf-a9f32527ac77', 'plusCircle', 'Covers respiratory checkups common to the breed.', 1),
   ('a1000000-0000-0000-0000-000000000008', '71fb238d-ec55-4e39-8faf-a9f32527ac77', 'moon', 'Provides a cooling bed to ease joint and breathing comfort.', 2),
-  ('a1000000-0000-0000-0000-000000000009', '71fb238d-ec55-4e39-8faf-a9f32527ac77', 'coffee', 'Funds his prescription weight-management diet.', 3);
+  ('a1000000-0000-0000-0000-000000000009', '71fb238d-ec55-4e39-8faf-a9f32527ac77', 'coffee', 'Funds his prescription weight-management diet.', 3),
+  ('a1000000-0000-0000-0000-000000000010', '73eda24d-87be-405a-9852-5d576119f1d5', 'heart', 'Funds monthly grooming and flea/tick prevention.', 1),
+  ('a1000000-0000-0000-0000-000000000011', '73eda24d-87be-405a-9852-5d576119f1d5', 'zap', 'Covers daily enrichment toys and playtime.', 2),
+  ('a1000000-0000-0000-0000-000000000012', '73eda24d-87be-405a-9852-5d576119f1d5', 'shield', 'Provides vaccinations and routine vet checkups.', 3);

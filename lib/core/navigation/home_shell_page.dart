@@ -26,8 +26,8 @@ class _HomeShellPageState extends State<HomeShellPage> {
         index: _index,
         children: [
           ExplorePage(onProfileTap: _goToProfile),
-          MyDogsPage(onExplore: _goToExplore),
-          const ProfilePage(),
+          MyDogsPage(isActive: _index == 1, onExplore: _goToExplore),
+          ProfilePage(isActive: _index == 2),
         ],
       ),
       bottomNavigationBar: NavigationBar(

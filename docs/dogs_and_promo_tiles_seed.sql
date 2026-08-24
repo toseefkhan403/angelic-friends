@@ -16,10 +16,8 @@ create table if not exists public.dogs (
   personality_tags text[] not null default '{}',
   status text not null default 'active_rehab'
     check (status in ('newly_arrived', 'active_rehab', 'long_term_resident')),
-  silver_price numeric(10,2) not null,
-  gold_price numeric(10,2) not null,
-  silver_product_id text,
-  gold_product_id text,
+  monthly_funding_goal integer not null default 30 check (monthly_funding_goal >= 0),
+  funded_credits integer not null default 0 check (funded_credits >= 0),
   sort_order int not null default 0,
   created_at timestamptz not null default now()
 );
@@ -50,16 +48,18 @@ for select
 to anon, authenticated
 using (true);
 
-insert into public.dogs (name, breed, age_months, image_url, story, care_tag, personality_tags, status, silver_price, gold_price, sort_order) values
+insert into public.dogs (name, breed, age_months, image_url, story, care_tag, personality_tags, status, sort_order) values
 ('Barnaby', 'Golden Mix', 144, 'https://images.unsplash.com/photo-1517849845537-4d257902861a',
  'Barnaby loves slow walks and endless cuddles. His arthritis means he needs a little extra help with joint supplements and a soft orthopedic bed.',
- 'Senior Care', array['Gentle Giant','Loves Naps'], 'long_term_resident', 12, 20, 0),
+ 'Senior Care', array['Gentle Giant','Loves Naps'], 'long_term_resident', 0),
 ('Pip', 'Terrier Mix', 48, 'https://images.unsplash.com/photo-1552053831-71594a27632d',
  E'Pip doesn''t let his back legs slow him down! He needs sponsors to help maintain his custom wheels and twice-weekly hydrotherapy sessions.',
- 'Wheels Needed', array['Speedy','Determined'], 'active_rehab', 15, 25, 1),
+ 'Wheels Needed', array['Speedy','Determined'], 'active_rehab', 1),
 ('Pugsy', 'Pug', 168, 'https://images.unsplash.com/photo-1543466835-00a7907e9de1',
  'Pugsy is enjoying his golden days in comfort. Sponsorship helps cover his specialized soft-food diet and daily comfort care.',
- 'Hospice Care', array['Snuggle Bug','Quiet'], 'long_term_resident', 10, 18, 2);
+ 'Hospice Care', array['Snuggle Bug','Quiet'], 'long_term_resident', 2);
+-- monthly_funding_goal defaults to 30 for every dog; override per-row if a
+-- particular dog should have a different monthly goal.
 
 insert into public.promo_tiles (title, subtitle, cta_label, insert_after_index) values
 ('Large portions', 'Help us keep the pantry stocked for our big eaters and special diet pups.', 'I like to eat!', 1);

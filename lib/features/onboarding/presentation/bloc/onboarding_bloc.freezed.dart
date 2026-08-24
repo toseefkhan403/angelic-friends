@@ -310,10 +310,10 @@ String toString() {
 /// @nodoc
 mixin _$OnboardingState {
 
- OnboardingSlidesStatus get slidesStatus; List<OnboardingSlide> get slides; String? get slidesErrorMessage;// Supplementary content for the "who these dogs are" and marquee/letter
-// slides. Fetched best-effort alongside the slides: a failure here
-// doesn't block onboarding, the relevant marquees just render empty.
- List<Dog> get featuredDogs; List<DogUpdateHighlight> get updateHighlights; String get name; NameSubmitStatus get submitStatus; String? get submitErrorMessage;
+ OnboardingSlidesStatus get slidesStatus; List<OnboardingSlide> get slides; String? get slidesErrorMessage;// Real update highlights shown in the marquee on the "who these dogs
+// are" and final slides. Fetched best-effort alongside the slides: a
+// failure here doesn't block onboarding, the marquee just renders empty.
+ List<DogUpdateHighlight> get updateHighlights; String get name; NameSubmitStatus get submitStatus; String? get submitErrorMessage;
 /// Create a copy of OnboardingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -324,16 +324,16 @@ $OnboardingStateCopyWith<OnboardingState> get copyWith => _$OnboardingStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingState&&(identical(other.slidesStatus, slidesStatus) || other.slidesStatus == slidesStatus)&&const DeepCollectionEquality().equals(other.slides, slides)&&(identical(other.slidesErrorMessage, slidesErrorMessage) || other.slidesErrorMessage == slidesErrorMessage)&&const DeepCollectionEquality().equals(other.featuredDogs, featuredDogs)&&const DeepCollectionEquality().equals(other.updateHighlights, updateHighlights)&&(identical(other.name, name) || other.name == name)&&(identical(other.submitStatus, submitStatus) || other.submitStatus == submitStatus)&&(identical(other.submitErrorMessage, submitErrorMessage) || other.submitErrorMessage == submitErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingState&&(identical(other.slidesStatus, slidesStatus) || other.slidesStatus == slidesStatus)&&const DeepCollectionEquality().equals(other.slides, slides)&&(identical(other.slidesErrorMessage, slidesErrorMessage) || other.slidesErrorMessage == slidesErrorMessage)&&const DeepCollectionEquality().equals(other.updateHighlights, updateHighlights)&&(identical(other.name, name) || other.name == name)&&(identical(other.submitStatus, submitStatus) || other.submitStatus == submitStatus)&&(identical(other.submitErrorMessage, submitErrorMessage) || other.submitErrorMessage == submitErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,slidesStatus,const DeepCollectionEquality().hash(slides),slidesErrorMessage,const DeepCollectionEquality().hash(featuredDogs),const DeepCollectionEquality().hash(updateHighlights),name,submitStatus,submitErrorMessage);
+int get hashCode => Object.hash(runtimeType,slidesStatus,const DeepCollectionEquality().hash(slides),slidesErrorMessage,const DeepCollectionEquality().hash(updateHighlights),name,submitStatus,submitErrorMessage);
 
 @override
 String toString() {
-  return 'OnboardingState(slidesStatus: $slidesStatus, slides: $slides, slidesErrorMessage: $slidesErrorMessage, featuredDogs: $featuredDogs, updateHighlights: $updateHighlights, name: $name, submitStatus: $submitStatus, submitErrorMessage: $submitErrorMessage)';
+  return 'OnboardingState(slidesStatus: $slidesStatus, slides: $slides, slidesErrorMessage: $slidesErrorMessage, updateHighlights: $updateHighlights, name: $name, submitStatus: $submitStatus, submitErrorMessage: $submitErrorMessage)';
 }
 
 
@@ -344,7 +344,7 @@ abstract mixin class $OnboardingStateCopyWith<$Res>  {
   factory $OnboardingStateCopyWith(OnboardingState value, $Res Function(OnboardingState) _then) = _$OnboardingStateCopyWithImpl;
 @useResult
 $Res call({
- OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<Dog> featuredDogs, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
+ OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
 });
 
 
@@ -361,13 +361,12 @@ class _$OnboardingStateCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? slidesStatus = null,Object? slides = null,Object? slidesErrorMessage = freezed,Object? featuredDogs = null,Object? updateHighlights = null,Object? name = null,Object? submitStatus = null,Object? submitErrorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? slidesStatus = null,Object? slides = null,Object? slidesErrorMessage = freezed,Object? updateHighlights = null,Object? name = null,Object? submitStatus = null,Object? submitErrorMessage = freezed,}) {
   return _then(_self.copyWith(
 slidesStatus: null == slidesStatus ? _self.slidesStatus : slidesStatus // ignore: cast_nullable_to_non_nullable
 as OnboardingSlidesStatus,slides: null == slides ? _self.slides : slides // ignore: cast_nullable_to_non_nullable
 as List<OnboardingSlide>,slidesErrorMessage: freezed == slidesErrorMessage ? _self.slidesErrorMessage : slidesErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,featuredDogs: null == featuredDogs ? _self.featuredDogs : featuredDogs // ignore: cast_nullable_to_non_nullable
-as List<Dog>,updateHighlights: null == updateHighlights ? _self.updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
+as String?,updateHighlights: null == updateHighlights ? _self.updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
 as List<DogUpdateHighlight>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,submitStatus: null == submitStatus ? _self.submitStatus : submitStatus // ignore: cast_nullable_to_non_nullable
 as NameSubmitStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable
@@ -456,10 +455,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<Dog> featuredDogs,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:
-return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.featuredDogs,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
+return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
   return orElse();
 
 }
@@ -477,10 +476,10 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<Dog> featuredDogs,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState():
-return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.featuredDogs,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
+return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -497,10 +496,10 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<Dog> featuredDogs,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:
-return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.featuredDogs,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
+return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
   return null;
 
 }
@@ -512,7 +511,7 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.f
 
 
 class _OnboardingState implements OnboardingState {
-  const _OnboardingState({this.slidesStatus = OnboardingSlidesStatus.loading, final  List<OnboardingSlide> slides = const <OnboardingSlide>[], this.slidesErrorMessage, final  List<Dog> featuredDogs = const <Dog>[], final  List<DogUpdateHighlight> updateHighlights = const <DogUpdateHighlight>[], this.name = '', this.submitStatus = NameSubmitStatus.initial, this.submitErrorMessage}): _slides = slides,_featuredDogs = featuredDogs,_updateHighlights = updateHighlights;
+  const _OnboardingState({this.slidesStatus = OnboardingSlidesStatus.loading, final  List<OnboardingSlide> slides = const <OnboardingSlide>[], this.slidesErrorMessage, final  List<DogUpdateHighlight> updateHighlights = const <DogUpdateHighlight>[], this.name = '', this.submitStatus = NameSubmitStatus.initial, this.submitErrorMessage}): _slides = slides,_updateHighlights = updateHighlights;
   
 
 @override@JsonKey() final  OnboardingSlidesStatus slidesStatus;
@@ -524,20 +523,13 @@ class _OnboardingState implements OnboardingState {
 }
 
 @override final  String? slidesErrorMessage;
-// Supplementary content for the "who these dogs are" and marquee/letter
-// slides. Fetched best-effort alongside the slides: a failure here
-// doesn't block onboarding, the relevant marquees just render empty.
- final  List<Dog> _featuredDogs;
-// Supplementary content for the "who these dogs are" and marquee/letter
-// slides. Fetched best-effort alongside the slides: a failure here
-// doesn't block onboarding, the relevant marquees just render empty.
-@override@JsonKey() List<Dog> get featuredDogs {
-  if (_featuredDogs is EqualUnmodifiableListView) return _featuredDogs;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_featuredDogs);
-}
-
+// Real update highlights shown in the marquee on the "who these dogs
+// are" and final slides. Fetched best-effort alongside the slides: a
+// failure here doesn't block onboarding, the marquee just renders empty.
  final  List<DogUpdateHighlight> _updateHighlights;
+// Real update highlights shown in the marquee on the "who these dogs
+// are" and final slides. Fetched best-effort alongside the slides: a
+// failure here doesn't block onboarding, the marquee just renders empty.
 @override@JsonKey() List<DogUpdateHighlight> get updateHighlights {
   if (_updateHighlights is EqualUnmodifiableListView) return _updateHighlights;
   // ignore: implicit_dynamic_type
@@ -558,16 +550,16 @@ _$OnboardingStateCopyWith<_OnboardingState> get copyWith => __$OnboardingStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingState&&(identical(other.slidesStatus, slidesStatus) || other.slidesStatus == slidesStatus)&&const DeepCollectionEquality().equals(other._slides, _slides)&&(identical(other.slidesErrorMessage, slidesErrorMessage) || other.slidesErrorMessage == slidesErrorMessage)&&const DeepCollectionEquality().equals(other._featuredDogs, _featuredDogs)&&const DeepCollectionEquality().equals(other._updateHighlights, _updateHighlights)&&(identical(other.name, name) || other.name == name)&&(identical(other.submitStatus, submitStatus) || other.submitStatus == submitStatus)&&(identical(other.submitErrorMessage, submitErrorMessage) || other.submitErrorMessage == submitErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingState&&(identical(other.slidesStatus, slidesStatus) || other.slidesStatus == slidesStatus)&&const DeepCollectionEquality().equals(other._slides, _slides)&&(identical(other.slidesErrorMessage, slidesErrorMessage) || other.slidesErrorMessage == slidesErrorMessage)&&const DeepCollectionEquality().equals(other._updateHighlights, _updateHighlights)&&(identical(other.name, name) || other.name == name)&&(identical(other.submitStatus, submitStatus) || other.submitStatus == submitStatus)&&(identical(other.submitErrorMessage, submitErrorMessage) || other.submitErrorMessage == submitErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,slidesStatus,const DeepCollectionEquality().hash(_slides),slidesErrorMessage,const DeepCollectionEquality().hash(_featuredDogs),const DeepCollectionEquality().hash(_updateHighlights),name,submitStatus,submitErrorMessage);
+int get hashCode => Object.hash(runtimeType,slidesStatus,const DeepCollectionEquality().hash(_slides),slidesErrorMessage,const DeepCollectionEquality().hash(_updateHighlights),name,submitStatus,submitErrorMessage);
 
 @override
 String toString() {
-  return 'OnboardingState(slidesStatus: $slidesStatus, slides: $slides, slidesErrorMessage: $slidesErrorMessage, featuredDogs: $featuredDogs, updateHighlights: $updateHighlights, name: $name, submitStatus: $submitStatus, submitErrorMessage: $submitErrorMessage)';
+  return 'OnboardingState(slidesStatus: $slidesStatus, slides: $slides, slidesErrorMessage: $slidesErrorMessage, updateHighlights: $updateHighlights, name: $name, submitStatus: $submitStatus, submitErrorMessage: $submitErrorMessage)';
 }
 
 
@@ -578,7 +570,7 @@ abstract mixin class _$OnboardingStateCopyWith<$Res> implements $OnboardingState
   factory _$OnboardingStateCopyWith(_OnboardingState value, $Res Function(_OnboardingState) _then) = __$OnboardingStateCopyWithImpl;
 @override @useResult
 $Res call({
- OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<Dog> featuredDogs, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
+ OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
 });
 
 
@@ -595,13 +587,12 @@ class __$OnboardingStateCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? slidesStatus = null,Object? slides = null,Object? slidesErrorMessage = freezed,Object? featuredDogs = null,Object? updateHighlights = null,Object? name = null,Object? submitStatus = null,Object? submitErrorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? slidesStatus = null,Object? slides = null,Object? slidesErrorMessage = freezed,Object? updateHighlights = null,Object? name = null,Object? submitStatus = null,Object? submitErrorMessage = freezed,}) {
   return _then(_OnboardingState(
 slidesStatus: null == slidesStatus ? _self.slidesStatus : slidesStatus // ignore: cast_nullable_to_non_nullable
 as OnboardingSlidesStatus,slides: null == slides ? _self._slides : slides // ignore: cast_nullable_to_non_nullable
 as List<OnboardingSlide>,slidesErrorMessage: freezed == slidesErrorMessage ? _self.slidesErrorMessage : slidesErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,featuredDogs: null == featuredDogs ? _self._featuredDogs : featuredDogs // ignore: cast_nullable_to_non_nullable
-as List<Dog>,updateHighlights: null == updateHighlights ? _self._updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
+as String?,updateHighlights: null == updateHighlights ? _self._updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
 as List<DogUpdateHighlight>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,submitStatus: null == submitStatus ? _self.submitStatus : submitStatus // ignore: cast_nullable_to_non_nullable
 as NameSubmitStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable

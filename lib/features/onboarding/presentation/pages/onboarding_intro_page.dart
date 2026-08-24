@@ -9,7 +9,6 @@ import 'package:sponsor_a_dog/core/navigation/home_shell_page.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
 import 'package:sponsor_a_dog/core/widgets/page_dots_indicator.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
-import 'package:sponsor_a_dog/features/dogs/domain/usecases/get_dogs.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/usecases/get_featured_dog_updates.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/usecases/get_onboarding_slides.dart';
@@ -24,7 +23,6 @@ class OnboardingIntroPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => OnboardingBloc(
         getOnboardingSlides: GetOnboardingSlides(context.read<OnboardingRepository>()),
-        getDogs: GetDogs(context.read<DogRepository>()),
         getFeaturedDogUpdates: GetFeaturedDogUpdates(context.read<DogRepository>()),
         authRepository: context.read<AuthRepository>(),
         analytics: context.read<AnalyticsService>(),
@@ -109,7 +107,6 @@ class _OnboardingViewState extends State<_OnboardingView> {
               return OnboardingSlideView(
                 slide: slides[index],
                 isActive: index == _currentIndex,
-                featuredDogs: state.featuredDogs,
                 updateHighlights: state.updateHighlights,
                 nameController: _nameController,
                 onNameChanged: (value) =>

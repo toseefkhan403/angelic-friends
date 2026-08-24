@@ -10,6 +10,9 @@ import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 /// Android/iOS — `purchases_flutter` doesn't support other platforms.
 class RevenueCatPurchasesService implements PurchasesService {
   @override
+  bool get isAvailable => true;
+
+  @override
   Future<void> initialize({String? appUserId}) async {
     try {
       if (kDebugMode) {

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/widgets/auto_scrolling_row.dart';
-import 'package:sponsor_a_dog/features/dogs/domain/entities/dog.dart';
-import 'package:sponsor_a_dog/features/dogs/presentation/widgets/explore_dog_card.dart';
+import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_update_highlight.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/entities/onboarding_slide.dart';
 import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/slide_eyebrow.dart';
+import 'package:sponsor_a_dog/features/onboarding/presentation/widgets/slides/update_highlight_card.dart';
 
-/// "Who these dogs are" slide: eyebrow/title/subtitle, an auto-scrolling
-/// marquee of real dog cards, then a short list of what sponsorship funds.
+/// "Who these dogs are" slide: eyebrow/title/subtitle, the same real-update
+/// marquee as the final slide, then a short list of what sponsorship funds.
 class WhoTheseDogsSlide extends StatelessWidget {
-  const WhoTheseDogsSlide({required this.slide, required this.dogs, super.key});
+  const WhoTheseDogsSlide({required this.slide, required this.highlights, super.key});
 
   final OnboardingSlide slide;
-  final List<Dog> dogs;
+  final List<DogUpdateHighlight> highlights;
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +32,14 @@ class WhoTheseDogsSlide extends StatelessWidget {
             style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.lg),
-          if (dogs.isNotEmpty)
+          if (highlights.isNotEmpty)
             SizedBox(
-              height: 260,
+              height: 220,
               child: AutoScrollingRow(
-                itemCount: dogs.length,
-                itemWidth: 150,
-                itemBuilder: (context, index) =>
-                    IgnorePointer(child: ExploreDogCard(dog: dogs[index])),
+                itemCount: highlights.length,
+                itemWidth: 160,
+                pixelsPerSecond: 24,
+                itemBuilder: (context, index) => UpdateHighlightCard(highlight: highlights[index]),
               ),
             ),
           const SizedBox(height: AppSpacing.lg),

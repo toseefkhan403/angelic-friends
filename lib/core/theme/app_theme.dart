@@ -67,7 +67,11 @@ abstract final class AppTheme {
       fontWeight: FontWeight.w600,
       color: AppColors.ink,
     ),
-    bodyLarge: GoogleFonts.comfortaa(fontSize: 16, color: AppColors.ink),
+    bodyLarge: GoogleFonts.comfortaa(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: AppColors.ink,
+    ),
     bodyMedium: GoogleFonts.comfortaa(fontSize: 14, color: AppColors.ink),
     bodySmall: GoogleFonts.comfortaa(fontSize: 12, color: AppColors.bodyGray),
     labelLarge: GoogleFonts.comfortaa(
