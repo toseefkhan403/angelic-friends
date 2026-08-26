@@ -96,7 +96,22 @@ class _ProfileView extends StatelessWidget {
           _ProfileTile(
             icon: LucideIcons.logOut,
             label: 'Sign out',
-            onTap: () => context.read<AuthRepository>().signOut(),
+            onTap: () async {
+              final authRepository = context.read<AuthRepository>();
+              final messenger = ScaffoldMessenger.of(context);
+              final navigator = Navigator.of(context, rootNavigator: true);
+              final result = await authRepository.signOut();
+              result.fold(
+                (failure) => messenger.showSnackBar(SnackBar(content: Text(failure.message))),
+                // `_AppRoot`'s StreamBuilder swaps to OnboardingIntroPage once
+                // the auth stream reflects this, but that swap only replaces
+                // the base route — if the user reached this tile with other
+                // pages pushed on top (dog detail, chat, ...), those would
+                // otherwise still cover it. Popping to root makes sure it's
+                // actually visible.
+                (_) => navigator.popUntil((route) => route.isFirst),
+              );
+            },
           ),
         ],
       ),

@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:label="sponsor_a_dog"
         android:name="${applicationName}"
@@ -23,6 +25,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <!-- Redirect target for Supabase's browser-based OAuth flow
+                 (used by Sign in with Apple on Android, which has no native
+                 flow — see SocialAuthConfig.oAuthRedirectUrl). Must also be
+                 added to Supabase's Auth > URL Configuration > Redirect URLs. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.sponsoradog.sponsor_a_dog" android:host="login-callback"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

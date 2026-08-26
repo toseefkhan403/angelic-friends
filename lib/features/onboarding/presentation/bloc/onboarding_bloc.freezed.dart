@@ -55,13 +55,15 @@ extension OnboardingEventPatterns on OnboardingEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( OnboardingStarted value)?  started,TResult Function( OnboardingNameChanged value)?  nameChanged,TResult Function( OnboardingSubmitted value)?  submitted,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( OnboardingStarted value)?  started,TResult Function( OnboardingNameChanged value)?  nameChanged,TResult Function( OnboardingSubmitted value)?  submitted,TResult Function( OnboardingGoogleSignInRequested value)?  googleSignInRequested,TResult Function( OnboardingAppleSignInRequested value)?  appleSignInRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case OnboardingStarted() when started != null:
 return started(_that);case OnboardingNameChanged() when nameChanged != null:
 return nameChanged(_that);case OnboardingSubmitted() when submitted != null:
-return submitted(_that);case _:
+return submitted(_that);case OnboardingGoogleSignInRequested() when googleSignInRequested != null:
+return googleSignInRequested(_that);case OnboardingAppleSignInRequested() when appleSignInRequested != null:
+return appleSignInRequested(_that);case _:
   return orElse();
 
 }
@@ -79,13 +81,15 @@ return submitted(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( OnboardingStarted value)  started,required TResult Function( OnboardingNameChanged value)  nameChanged,required TResult Function( OnboardingSubmitted value)  submitted,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( OnboardingStarted value)  started,required TResult Function( OnboardingNameChanged value)  nameChanged,required TResult Function( OnboardingSubmitted value)  submitted,required TResult Function( OnboardingGoogleSignInRequested value)  googleSignInRequested,required TResult Function( OnboardingAppleSignInRequested value)  appleSignInRequested,}){
 final _that = this;
 switch (_that) {
 case OnboardingStarted():
 return started(_that);case OnboardingNameChanged():
 return nameChanged(_that);case OnboardingSubmitted():
-return submitted(_that);}
+return submitted(_that);case OnboardingGoogleSignInRequested():
+return googleSignInRequested(_that);case OnboardingAppleSignInRequested():
+return appleSignInRequested(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -99,13 +103,15 @@ return submitted(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( OnboardingStarted value)?  started,TResult? Function( OnboardingNameChanged value)?  nameChanged,TResult? Function( OnboardingSubmitted value)?  submitted,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( OnboardingStarted value)?  started,TResult? Function( OnboardingNameChanged value)?  nameChanged,TResult? Function( OnboardingSubmitted value)?  submitted,TResult? Function( OnboardingGoogleSignInRequested value)?  googleSignInRequested,TResult? Function( OnboardingAppleSignInRequested value)?  appleSignInRequested,}){
 final _that = this;
 switch (_that) {
 case OnboardingStarted() when started != null:
 return started(_that);case OnboardingNameChanged() when nameChanged != null:
 return nameChanged(_that);case OnboardingSubmitted() when submitted != null:
-return submitted(_that);case _:
+return submitted(_that);case OnboardingGoogleSignInRequested() when googleSignInRequested != null:
+return googleSignInRequested(_that);case OnboardingAppleSignInRequested() when appleSignInRequested != null:
+return appleSignInRequested(_that);case _:
   return null;
 
 }
@@ -122,12 +128,14 @@ return submitted(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( String name)?  nameChanged,TResult Function()?  submitted,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function( String name)?  nameChanged,TResult Function()?  submitted,TResult Function()?  googleSignInRequested,TResult Function()?  appleSignInRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case OnboardingStarted() when started != null:
 return started();case OnboardingNameChanged() when nameChanged != null:
 return nameChanged(_that.name);case OnboardingSubmitted() when submitted != null:
-return submitted();case _:
+return submitted();case OnboardingGoogleSignInRequested() when googleSignInRequested != null:
+return googleSignInRequested();case OnboardingAppleSignInRequested() when appleSignInRequested != null:
+return appleSignInRequested();case _:
   return orElse();
 
 }
@@ -145,12 +153,14 @@ return submitted();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( String name)  nameChanged,required TResult Function()  submitted,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function( String name)  nameChanged,required TResult Function()  submitted,required TResult Function()  googleSignInRequested,required TResult Function()  appleSignInRequested,}) {final _that = this;
 switch (_that) {
 case OnboardingStarted():
 return started();case OnboardingNameChanged():
 return nameChanged(_that.name);case OnboardingSubmitted():
-return submitted();}
+return submitted();case OnboardingGoogleSignInRequested():
+return googleSignInRequested();case OnboardingAppleSignInRequested():
+return appleSignInRequested();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -164,12 +174,14 @@ return submitted();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( String name)?  nameChanged,TResult? Function()?  submitted,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function( String name)?  nameChanged,TResult? Function()?  submitted,TResult? Function()?  googleSignInRequested,TResult? Function()?  appleSignInRequested,}) {final _that = this;
 switch (_that) {
 case OnboardingStarted() when started != null:
 return started();case OnboardingNameChanged() when nameChanged != null:
 return nameChanged(_that.name);case OnboardingSubmitted() when submitted != null:
-return submitted();case _:
+return submitted();case OnboardingGoogleSignInRequested() when googleSignInRequested != null:
+return googleSignInRequested();case OnboardingAppleSignInRequested() when appleSignInRequested != null:
+return appleSignInRequested();case _:
   return null;
 
 }
@@ -308,12 +320,76 @@ String toString() {
 
 
 /// @nodoc
+
+
+class OnboardingGoogleSignInRequested implements OnboardingEvent {
+  const OnboardingGoogleSignInRequested();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingGoogleSignInRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'OnboardingEvent.googleSignInRequested()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class OnboardingAppleSignInRequested implements OnboardingEvent {
+  const OnboardingAppleSignInRequested();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingAppleSignInRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'OnboardingEvent.appleSignInRequested()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$OnboardingState {
 
  OnboardingSlidesStatus get slidesStatus; List<OnboardingSlide> get slides; String? get slidesErrorMessage;// Real update highlights shown in the marquee on the "who these dogs
 // are" and final slides. Fetched best-effort alongside the slides: a
 // failure here doesn't block onboarding, the marquee just renders empty.
- List<DogUpdateHighlight> get updateHighlights; String get name; NameSubmitStatus get submitStatus; String? get submitErrorMessage;
+ List<DogUpdateHighlight> get updateHighlights; String get name; OnboardingCompletionStatus get submitStatus; String? get submitErrorMessage;
 /// Create a copy of OnboardingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -344,7 +420,7 @@ abstract mixin class $OnboardingStateCopyWith<$Res>  {
   factory $OnboardingStateCopyWith(OnboardingState value, $Res Function(OnboardingState) _then) = _$OnboardingStateCopyWithImpl;
 @useResult
 $Res call({
- OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
+ OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, OnboardingCompletionStatus submitStatus, String? submitErrorMessage
 });
 
 
@@ -369,7 +445,7 @@ as List<OnboardingSlide>,slidesErrorMessage: freezed == slidesErrorMessage ? _se
 as String?,updateHighlights: null == updateHighlights ? _self.updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
 as List<DogUpdateHighlight>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,submitStatus: null == submitStatus ? _self.submitStatus : submitStatus // ignore: cast_nullable_to_non_nullable
-as NameSubmitStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable
+as OnboardingCompletionStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -455,7 +531,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  OnboardingCompletionStatus submitStatus,  String? submitErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:
 return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
@@ -476,7 +552,7 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.u
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  OnboardingCompletionStatus submitStatus,  String? submitErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState():
 return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
@@ -496,7 +572,7 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.u
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  NameSubmitStatus submitStatus,  String? submitErrorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OnboardingSlidesStatus slidesStatus,  List<OnboardingSlide> slides,  String? slidesErrorMessage,  List<DogUpdateHighlight> updateHighlights,  String name,  OnboardingCompletionStatus submitStatus,  String? submitErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:
 return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.updateHighlights,_that.name,_that.submitStatus,_that.submitErrorMessage);case _:
@@ -511,7 +587,7 @@ return $default(_that.slidesStatus,_that.slides,_that.slidesErrorMessage,_that.u
 
 
 class _OnboardingState implements OnboardingState {
-  const _OnboardingState({this.slidesStatus = OnboardingSlidesStatus.loading, final  List<OnboardingSlide> slides = const <OnboardingSlide>[], this.slidesErrorMessage, final  List<DogUpdateHighlight> updateHighlights = const <DogUpdateHighlight>[], this.name = '', this.submitStatus = NameSubmitStatus.initial, this.submitErrorMessage}): _slides = slides,_updateHighlights = updateHighlights;
+  const _OnboardingState({this.slidesStatus = OnboardingSlidesStatus.loading, final  List<OnboardingSlide> slides = const <OnboardingSlide>[], this.slidesErrorMessage, final  List<DogUpdateHighlight> updateHighlights = const <DogUpdateHighlight>[], this.name = '', this.submitStatus = OnboardingCompletionStatus.initial, this.submitErrorMessage}): _slides = slides,_updateHighlights = updateHighlights;
   
 
 @override@JsonKey() final  OnboardingSlidesStatus slidesStatus;
@@ -537,7 +613,7 @@ class _OnboardingState implements OnboardingState {
 }
 
 @override@JsonKey() final  String name;
-@override@JsonKey() final  NameSubmitStatus submitStatus;
+@override@JsonKey() final  OnboardingCompletionStatus submitStatus;
 @override final  String? submitErrorMessage;
 
 /// Create a copy of OnboardingState
@@ -570,7 +646,7 @@ abstract mixin class _$OnboardingStateCopyWith<$Res> implements $OnboardingState
   factory _$OnboardingStateCopyWith(_OnboardingState value, $Res Function(_OnboardingState) _then) = __$OnboardingStateCopyWithImpl;
 @override @useResult
 $Res call({
- OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, NameSubmitStatus submitStatus, String? submitErrorMessage
+ OnboardingSlidesStatus slidesStatus, List<OnboardingSlide> slides, String? slidesErrorMessage, List<DogUpdateHighlight> updateHighlights, String name, OnboardingCompletionStatus submitStatus, String? submitErrorMessage
 });
 
 
@@ -595,7 +671,7 @@ as List<OnboardingSlide>,slidesErrorMessage: freezed == slidesErrorMessage ? _se
 as String?,updateHighlights: null == updateHighlights ? _self._updateHighlights : updateHighlights // ignore: cast_nullable_to_non_nullable
 as List<DogUpdateHighlight>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,submitStatus: null == submitStatus ? _self.submitStatus : submitStatus // ignore: cast_nullable_to_non_nullable
-as NameSubmitStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable
+as OnboardingCompletionStatus,submitErrorMessage: freezed == submitErrorMessage ? _self.submitErrorMessage : submitErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

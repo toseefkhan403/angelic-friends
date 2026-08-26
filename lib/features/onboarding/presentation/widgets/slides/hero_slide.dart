@@ -46,7 +46,7 @@ class HeroSlide extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.xl),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -56,7 +56,7 @@ class HeroSlide extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(slide.title, style: theme.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     slide.subtitle,
                     style: theme.textTheme.bodyLarge?.copyWith(

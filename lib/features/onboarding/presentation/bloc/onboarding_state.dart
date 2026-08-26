@@ -2,7 +2,9 @@ part of 'onboarding_bloc.dart';
 
 enum OnboardingSlidesStatus { loading, loaded, failure }
 
-enum NameSubmitStatus { initial, submitting, success, failure }
+/// Covers all three ways onboarding can finish: anonymous name sign-in,
+/// Google, or Apple.
+enum OnboardingCompletionStatus { initial, submitting, success, failure }
 
 @freezed
 abstract class OnboardingState with _$OnboardingState {
@@ -15,7 +17,7 @@ abstract class OnboardingState with _$OnboardingState {
     // failure here doesn't block onboarding, the marquee just renders empty.
     @Default(<DogUpdateHighlight>[]) List<DogUpdateHighlight> updateHighlights,
     @Default('') String name,
-    @Default(NameSubmitStatus.initial) NameSubmitStatus submitStatus,
+    @Default(OnboardingCompletionStatus.initial) OnboardingCompletionStatus submitStatus,
     String? submitErrorMessage,
   }) = _OnboardingState;
 }

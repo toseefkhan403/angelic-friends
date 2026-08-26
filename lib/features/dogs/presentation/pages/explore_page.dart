@@ -193,8 +193,31 @@ class _ExploreFeedSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      children: const [
-        ShimmerLoading(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.sm,
+          ),
+          // Its own ShimmerLoading, separate from the card skeletons below —
+          // otherwise a single shared sweep spans both and they read as one
+          // joined block instead of two independently-loading sections.
+          child: const ShimmerLoading(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerBox(width: 220, height: 28),
+                SizedBox(height: AppSpacing.xs),
+                ShimmerBox(width: double.infinity, height: 14),
+                SizedBox(height: 6),
+                ShimmerBox(width: 180, height: 14),
+              ],
+            ),
+          ),
+        ),
+        const ShimmerLoading(
           child: Column(
             children: [
               ExploreDogCardSkeleton(),

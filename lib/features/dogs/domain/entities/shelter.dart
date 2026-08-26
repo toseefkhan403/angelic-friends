@@ -10,6 +10,7 @@ class Shelter extends Equatable {
     this.logoUrl,
     this.distanceKm,
     this.mapsUrl,
+    this.instagramUrl,
   });
 
   final String id;
@@ -25,6 +26,10 @@ class Shelter extends Equatable {
   /// in the database rather than derived client-side.
   final String? mapsUrl;
 
+  /// Link to the shelter's Instagram profile. Set per-shelter in the
+  /// database rather than derived client-side.
+  final String? instagramUrl;
+
   @override
-  List<Object?> get props => [id, name, location, logoUrl, distanceKm, mapsUrl];
+  List<Object?> get props => [id, name, location, logoUrl, distanceKm, mapsUrl, instagramUrl];
 }

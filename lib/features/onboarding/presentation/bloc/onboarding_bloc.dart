@@ -28,6 +28,8 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     on<OnboardingStarted>(_onStarted);
     on<OnboardingNameChanged>(_onNameChanged);
     on<OnboardingSubmitted>(_onSubmitted);
+    on<OnboardingGoogleSignInRequested>(_onGoogleSignInRequested);
+    on<OnboardingAppleSignInRequested>(_onAppleSignInRequested);
   }
 
   final GetOnboardingSlides _getOnboardingSlides;
@@ -62,7 +64,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   }
 
   void _onNameChanged(OnboardingNameChanged event, Emitter<OnboardingState> emit) {
-    emit(state.copyWith(name: event.name, submitStatus: NameSubmitStatus.initial));
+    emit(state.copyWith(name: event.name, submitStatus: OnboardingCompletionStatus.initial));
   }
 
   Future<void> _onSubmitted(
@@ -72,22 +74,54 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     final trimmedName = state.name.trim();
     if (trimmedName.isEmpty) {
       emit(state.copyWith(
-        submitStatus: NameSubmitStatus.failure,
+        submitStatus: OnboardingCompletionStatus.failure,
         submitErrorMessage: 'Tell us what to call you.',
       ));
       return;
     }
 
-    emit(state.copyWith(submitStatus: NameSubmitStatus.submitting));
+    emit(state.copyWith(submitStatus: OnboardingCompletionStatus.submitting));
     final result = await _authRepository.signInAnonymouslyWithName(trimmedName);
+    _emitCompletionResult(result, emit);
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    OnboardingGoogleSignInRequested event,
+    Emitter<OnboardingState> emit,
+  ) async {
+    emit(state.copyWith(submitStatus: OnboardingCompletionStatus.submitting));
+    final result = await _authRepository.signInWithGoogle();
+    _emitCompletionResult(result, emit);
+  }
+
+  Future<void> _onAppleSignInRequested(
+    OnboardingAppleSignInRequested event,
+    Emitter<OnboardingState> emit,
+  ) async {
+    emit(state.copyWith(submitStatus: OnboardingCompletionStatus.submitting));
+    final result = await _authRepository.signInWithApple();
+    _emitCompletionResult(result, emit);
+  }
+
+  void _emitCompletionResult(Either<Failure, void> result, Emitter<OnboardingState> emit) {
     result.fold(
-      (failure) => emit(state.copyWith(
-        submitStatus: NameSubmitStatus.failure,
-        submitErrorMessage: failure.message,
-      )),
+      (failure) {
+        // The user dismissing a Google/Apple sign-in sheet themselves isn't
+        // a real error — reset quietly rather than showing a message or
+        // (worse) treating it as success and navigating past onboarding
+        // with no session.
+        if (failure is AuthCancelledFailure) {
+          emit(state.copyWith(submitStatus: OnboardingCompletionStatus.initial));
+          return;
+        }
+        emit(state.copyWith(
+          submitStatus: OnboardingCompletionStatus.failure,
+          submitErrorMessage: failure.message,
+        ));
+      },
       (_) {
         _analytics.logEvent('onboarding_complete');
-        emit(state.copyWith(submitStatus: NameSubmitStatus.success));
+        emit(state.copyWith(submitStatus: OnboardingCompletionStatus.success));
       },
     );
   }

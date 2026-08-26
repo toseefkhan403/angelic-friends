@@ -456,57 +456,61 @@ class _ShelterRow extends StatelessWidget {
         ? '${shelter.location} · ${shelter.distanceKm!.toStringAsFixed(1)} km from you'
         : shelter.location;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          alignment: Alignment.center,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: AppColors.neutralFill,
-            border: Border.all(color: AppColors.ink, width: 2),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: shelter.instagramUrl != null ? () => openUrl(shelter.instagramUrl!) : null,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: AppColors.neutralFill,
+              border: Border.all(color: AppColors.ink, width: 2),
+            ),
+            child: shelter.logoUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: shelter.logoUrl!,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) =>
+                        const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),
+                  )
+                : const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),
           ),
-          child: shelter.logoUrl != null
-              ? CachedNetworkImage(
-                  imageUrl: shelter.logoUrl!,
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) =>
-                      const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),
-                )
-              : const Icon(LucideIcons.home, size: 20, color: AppColors.bodyGray),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(shelter.name, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
-              Text(
-                locationLine,
-                style: theme.textTheme.bodySmall?.copyWith(color: AppColors.bodyGray),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        if (shelter.mapsUrl != null)
-          NeoButton(
-            size: NeoButtonSize.small,
-            onPressed: () => openUrl(shelter.mapsUrl!),
-            child: Row(
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(LucideIcons.mapPin, size: 16),
-                SizedBox(width: AppSpacing.xs),
-                Text('Locate'),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(shelter.name, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                Text(
+                  locationLine,
+                  style: theme.textTheme.bodySmall?.copyWith(color: AppColors.bodyGray),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
-      ],
+          const SizedBox(width: AppSpacing.sm),
+          if (shelter.mapsUrl != null)
+            NeoButton(
+              size: NeoButtonSize.small,
+              onPressed: () => openUrl(shelter.mapsUrl!),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(LucideIcons.mapPin, size: 16),
+                  SizedBox(width: AppSpacing.xs),
+                  Text('Locate'),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

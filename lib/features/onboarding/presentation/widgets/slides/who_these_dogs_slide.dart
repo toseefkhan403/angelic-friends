@@ -19,22 +19,31 @@ class WhoTheseDogsSlide extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (slide.eyebrow != null) SlideEyebrow(text: slide.eyebrow!),
-          const SizedBox(height: AppSpacing.sm),
-          Text(slide.title, style: theme.textTheme.headlineMedium),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            slide.subtitle,
-            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (slide.eyebrow != null) SlideEyebrow(text: slide.eyebrow!),
+                const SizedBox(height: AppSpacing.sm),
+                Text(slide.title, style: theme.textTheme.headlineMedium),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  slide.subtitle,
+                  style:
+                      theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
           if (highlights.isNotEmpty)
             SizedBox(
-              height: 220,
+              height: 250,
               child: AutoScrollingRow(
                 itemCount: highlights.length,
                 itemWidth: 160,
@@ -42,10 +51,18 @@ class WhoTheseDogsSlide extends StatelessWidget {
                 itemBuilder: (context, index) => UpdateHighlightCard(highlight: highlights[index]),
               ),
             ),
-          const SizedBox(height: AppSpacing.lg),
-          const _ImpactRow(emoji: '❤️', text: 'Funds real medical care, not overhead'),
-          const _ImpactRow(emoji: '🌙', text: 'Pays for their bed, meds, and quiet comfort'),
-          const _ImpactRow(emoji: '🛡️', text: 'Keeps a long-term resident from being forgotten'),
+          const SizedBox(height: AppSpacing.xl),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                _ImpactRow(emoji: '❤️', text: 'Funds real medical care'),
+                _ImpactRow(emoji: '🌙', text: 'Pays for their bed, meds, and quiet comfort'),
+                _ImpactRow(emoji: '🛡️', text: 'Keeps a long-term resident from being forgotten'),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -66,9 +83,9 @@ class _ImpactRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 20)),
+          Text(emoji, style: const TextStyle(fontSize: 18)),
           const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(text, style: theme.textTheme.bodyMedium)),
+          Expanded(child: Text(text, style: theme.textTheme.bodySmall)),
         ],
       ),
     );

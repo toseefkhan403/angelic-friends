@@ -61,12 +61,12 @@ class _OnboardingViewState extends State<_OnboardingView> {
         child: BlocConsumer<OnboardingBloc, OnboardingState>(
           listenWhen: (previous, current) => previous.submitStatus != current.submitStatus,
           listener: (context, state) {
-            if (state.submitStatus == NameSubmitStatus.success) {
+            if (state.submitStatus == OnboardingCompletionStatus.success) {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const HomeShellPage()),
                 (route) => false,
               );
-            } else if (state.submitStatus == NameSubmitStatus.failure &&
+            } else if (state.submitStatus == OnboardingCompletionStatus.failure &&
                 state.submitErrorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.submitErrorMessage!)),
@@ -93,7 +93,6 @@ class _OnboardingViewState extends State<_OnboardingView> {
   Widget _buildSlides(BuildContext context, OnboardingState state) {
     final slides = state.slides;
     final isLastSlide = _currentIndex == slides.length - 1;
-    final isSubmitting = state.submitStatus == NameSubmitStatus.submitting;
 
     return Column(
       children: [
@@ -116,33 +115,24 @@ class _OnboardingViewState extends State<_OnboardingView> {
           ),
         ),
         PageDotsIndicator(count: slides.length, currentIndex: _currentIndex),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: SizedBox(
-            width: double.infinity,
-            child: NeoButton(
-              onPressed: isSubmitting
-                  ? null
-                  : () {
-                      if (isLastSlide) {
-                        context.read<OnboardingBloc>().add(const OnboardingEvent.submitted());
-                      } else {
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                        );
-                      }
-                    },
-              child: isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CupertinoActivityIndicator(),
-                    )
-                  : Text(isLastSlide ? 'Get Started' : 'Next'),
+        // The last slide has its own Google/Apple/Guest buttons — no
+        // generic "Next"/"Get Started" button needed underneath it.
+        if (!isLastSlide)
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: SizedBox(
+              width: double.infinity,
+              child: NeoButton(
+                onPressed: () => _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                ),
+                child: const Text('Next'),
+              ),
             ),
-          ),
-        ),
+          )
+        else
+          const SizedBox(height: AppSpacing.lg),
       ],
     );
   }

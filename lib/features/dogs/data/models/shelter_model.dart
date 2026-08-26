@@ -8,6 +8,7 @@ class ShelterModel {
     this.logoUrl,
     this.distanceKm,
     this.mapsUrl,
+    this.instagramUrl,
   });
 
   final String id;
@@ -16,6 +17,7 @@ class ShelterModel {
   final String? logoUrl;
   final double? distanceKm;
   final String? mapsUrl;
+  final String? instagramUrl;
 
   factory ShelterModel.fromJson(Map<String, dynamic> json) => ShelterModel(
         id: json['id'] as String,
@@ -24,6 +26,7 @@ class ShelterModel {
         logoUrl: json['logo_url'] as String?,
         distanceKm: (json['distance_km'] as num?)?.toDouble(),
         mapsUrl: json['maps_url'] as String?,
+        instagramUrl: json['instagram_url'] as String?,
       );
 
   Shelter toEntity() => Shelter(
@@ -33,5 +36,6 @@ class ShelterModel {
         logoUrl: logoUrl,
         distanceKm: distanceKm,
         mapsUrl: mapsUrl,
+        instagramUrl: instagramUrl,
       );
 }

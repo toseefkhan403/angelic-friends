@@ -20,3 +20,10 @@ class NetworkFailure extends Failure {
 class CacheFailure extends Failure {
   const CacheFailure([super.message = 'Failed to load cached data.']);
 }
+
+/// The user dismissed a native sign-in sheet (Google account picker, Apple
+/// ID prompt) themselves — not a real error, so callers should quietly
+/// reset rather than show an error message.
+class AuthCancelledFailure extends Failure {
+  const AuthCancelledFailure() : super('Sign-in was cancelled.');
+}
