@@ -37,7 +37,7 @@ class SponsorAnotherPalCard extends StatelessWidget {
                 child: const Icon(LucideIcons.plus, size: 28, color: AppColors.ink),
               ),
               const SizedBox(height: AppSpacing.md),
-              Text('Sponsor Another Pal', style: theme.textTheme.titleMedium),
+              Text('Sponsor Another Pup', style: theme.textTheme.titleMedium),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'There are many more dogs looking for a friend like you.',

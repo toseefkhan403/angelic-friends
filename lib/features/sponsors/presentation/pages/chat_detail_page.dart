@@ -103,26 +103,9 @@ class _ChatViewState extends State<_ChatView> {
               child: const Icon(LucideIcons.pawPrint, size: 18, color: AppColors.ink),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Sanctuary Team', style: theme.textTheme.titleMedium),
-                Text(
-                  'Active now',
-                  style: theme.textTheme.labelSmall?.copyWith(color: AppColors.bodyGray),
-                ),
-              ],
-            ),
+            Text('Sanctuary Team', style: theme.textTheme.titleMedium),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.moreVertical),
-            onPressed: () => ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-          ),
-        ],
       ),
       body: SafeArea(
         top: false,
@@ -435,14 +418,6 @@ class _ChatInputBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          NeoIconButton(
-            onPressed: () => ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-            semanticLabel: 'Attach',
-            size: NeoButtonSize.small,
-            icon: const Icon(LucideIcons.plus),
-          ),
-          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: TextField(
               controller: controller,

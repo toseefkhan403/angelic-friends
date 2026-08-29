@@ -156,9 +156,6 @@ class _MyDogsContent extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => ChatDetailPage(sponsorship: sponsorship)),
               ),
-              onSendTreat: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon')),
-              ),
             ),
           SponsorAnotherPalCard(onTap: onExplore ?? () {}),
         ],

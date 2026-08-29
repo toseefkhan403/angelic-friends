@@ -27,6 +27,13 @@ class _AutoPlayVideoState extends State<AutoPlayVideo> {
   // over instead of showing it as a flash.
   bool _showVideo = false;
 
+  // On Android the reported frame size can still change a few frames after
+  // `initialize()` resolves (the platform view refines it once the codec is
+  // fully configured). Re-syncing on every size change — not just once —
+  // keeps the FittedBox's cover math from locking onto a stale aspect ratio,
+  // which otherwise shows up as a black bar down one side of the video.
+  Size _lastSize = Size.zero;
+
   @override
   void initState() {
     super.initState();
@@ -36,17 +43,23 @@ class _AutoPlayVideoState extends State<AutoPlayVideo> {
       ..addListener(_onControllerUpdate)
       ..initialize().then((_) {
         if (!mounted) return;
+        _lastSize = _controller.value.size;
         setState(() => _initialized = true);
         if (widget.isActive) _controller.play();
       });
   }
 
   void _onControllerUpdate() {
-    if (!_showVideo &&
-        _controller.value.isInitialized &&
-        _controller.value.position > Duration.zero) {
-      setState(() => _showVideo = true);
-    }
+    if (!_controller.value.isInitialized) return;
+
+    final showVideo = !_showVideo && _controller.value.position > Duration.zero;
+    final sizeChanged = _controller.value.size != _lastSize;
+    if (!showVideo && !sizeChanged) return;
+
+    setState(() {
+      if (showVideo) _showVideo = true;
+      if (sizeChanged) _lastSize = _controller.value.size;
+    });
   }
 
   @override
@@ -87,8 +100,8 @@ class _AutoPlayVideoState extends State<AutoPlayVideo> {
               // turned on.
               clipBehavior: Clip.hardEdge,
               child: SizedBox(
-                width: _controller.value.size.width,
-                height: _controller.value.size.height,
+                width: _lastSize.width,
+                height: _lastSize.height,
                 child: VideoPlayer(_controller),
               ),
             ),

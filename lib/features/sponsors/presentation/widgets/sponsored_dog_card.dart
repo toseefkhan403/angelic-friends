@@ -1,4 +1,4 @@
-import 'package:brutalist_ui/brutalist_ui.dart' show NeoBadge, NeoBox, NeoButton, NeoIconButton, NeoButtonSize;
+import 'package:brutalist_ui/brutalist_ui.dart' show NeoBadge, NeoBox, NeoButton;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +18,10 @@ const _months = [
 /// A sponsored dog's card in "My Pups": photo, personality badge, name,
 /// latest update preview, Send Treat + chat entry point.
 class SponsoredDogCard extends StatelessWidget {
-  const SponsoredDogCard({
-    required this.sponsorship,
-    required this.onOpenChat,
-    required this.onSendTreat,
-    super.key,
-  });
+  const SponsoredDogCard({required this.sponsorship, required this.onOpenChat, super.key});
 
   final Sponsorship sponsorship;
   final VoidCallback onOpenChat;
-  final VoidCallback onSendTreat;
 
   @override
   Widget build(BuildContext context) {
@@ -92,30 +86,20 @@ class SponsoredDogCard extends StatelessWidget {
                     const SizedBox(height: AppSpacing.sm),
                     _LatestUpdatePreview(sponsorshipId: sponsorship.id),
                     const SizedBox(height: AppSpacing.md),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: NeoButton(
-                            onPressed: onSendTreat,
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(LucideIcons.bone, size: 16),
-                                SizedBox(width: 6),
-                                Text('Send Treat'),
-                              ],
-                            ),
-                          ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: NeoButton(
+                        onPressed: onOpenChat,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(LucideIcons.bone, size: 16),
+                            SizedBox(width: 6),
+                            Text('Send Treat'),
+                          ],
                         ),
-                        const SizedBox(width: AppSpacing.sm),
-                        NeoIconButton(
-                          onPressed: onOpenChat,
-                          semanticLabel: 'Chat about ${dog.name}',
-                          size: NeoButtonSize.small,
-                          icon: const Icon(LucideIcons.mail),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),

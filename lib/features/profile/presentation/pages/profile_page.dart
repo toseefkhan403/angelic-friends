@@ -31,12 +31,15 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AngelStatusBloc(
-        getMyAngelSubscription: GetMyAngelSubscription(context.read<AngelRepository>()),
+        getMyAngelSubscription: GetMyAngelSubscription(
+          context.read<AngelRepository>(),
+        ),
       )..add(const AngelStatusFetchRequested()),
       child: TabRefreshListener(
         isActive: isActive,
-        onActivated: (context) =>
-            context.read<AngelStatusBloc>().add(const AngelStatusFetchRequested()),
+        onActivated: (context) => context.read<AngelStatusBloc>().add(
+          const AngelStatusFetchRequested(),
+        ),
         child: const _ProfileView(),
       ),
     );
@@ -53,101 +56,136 @@ class _ProfileView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.neutralFill,
-                  border: Border.all(color: AppColors.ink, width: 2),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<AngelStatusBloc>().add(
+            const AngelStatusFetchRequested(),
+          );
+          await context.read<AngelStatusBloc>().stream.firstWhere(
+            (s) => s is! AngelStatusLoading,
+          );
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.neutralFill,
+                    border: Border.all(color: AppColors.ink, width: 2),
+                  ),
+                  child: const Icon(
+                    LucideIcons.user,
+                    color: AppColors.ink,
+                    size: 28,
+                  ),
                 ),
-                child: const Icon(LucideIcons.user, color: AppColors.ink, size: 28),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    displayName ?? 'Friend',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            const _AngelStatusCard(),
+            const SizedBox(height: AppSpacing.lg),
+            const Divider(),
+            _ProfileTile(
+              icon: LucideIcons.award,
+              label: 'Manage subscription',
+              onTap: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  await RevenueCatUI.presentCustomerCenter();
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Couldn't open subscription management: $e",
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                if (context.mounted) {
+                  context.read<AngelStatusBloc>().add(
+                    const AngelStatusFetchRequested(),
+                  );
+                }
+              },
+            ),
+            _ProfileTile(
+              icon: LucideIcons.gift,
+              label: 'Donation & gift history',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const DonationHistoryPage()),
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(displayName ?? 'Friend', style: theme.textTheme.titleMedium),
+            ),
+            _ProfileTile(
+              icon: LucideIcons.bell,
+              label: 'Notification preferences',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NotificationPreferencesPage(),
+                ),
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          const _AngelStatusCard(),
-          const SizedBox(height: AppSpacing.lg),
-          const Divider(),
-          _ProfileTile(
-            icon: LucideIcons.award,
-            label: 'Manage subscription',
-            onTap: () async {
-              final messenger = ScaffoldMessenger.of(context);
-              try {
-                await RevenueCatUI.presentCustomerCenter();
-              } catch (e) {
-                messenger.showSnackBar(
-                  SnackBar(content: Text("Couldn't open subscription management: $e")),
+            ),
+            _ProfileTile(
+              icon: LucideIcons.helpCircle,
+              label: 'Support',
+              onTap: () => openUrl(
+                'mailto:eastindiacoding@gmail.com?subject=${Uri.encodeComponent('Support request - Angelic Friends')}',
+              ),
+            ),
+            _ProfileTile(
+              icon: LucideIcons.fileText,
+              label: 'Privacy policy',
+              onTap: () => openUrl(
+                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/PRIVACY_POLICY.md',
+              ),
+            ),
+            _ProfileTile(
+              icon: LucideIcons.scrollText,
+              label: 'Terms of use',
+              onTap: () => openUrl(
+                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/TERMS_OF_USE.md',
+              ),
+            ),
+            const Divider(),
+            _ProfileTile(
+              icon: LucideIcons.logOut,
+              label: 'Sign out',
+              onTap: () async {
+                final authRepository = context.read<AuthRepository>();
+                final messenger = ScaffoldMessenger.of(context);
+                final navigator = Navigator.of(context, rootNavigator: true);
+                final result = await authRepository.signOut();
+                result.fold(
+                  (failure) => messenger.showSnackBar(
+                    SnackBar(content: Text(failure.message)),
+                  ),
+                  // `_AppRoot`'s StreamBuilder swaps to OnboardingIntroPage once
+                  // the auth stream reflects this, but that swap only replaces
+                  // the base route — if the user reached this tile with other
+                  // pages pushed on top (dog detail, chat, ...), those would
+                  // otherwise still cover it. Popping to root makes sure it's
+                  // actually visible.
+                  (_) => navigator.popUntil((route) => route.isFirst),
                 );
-                return;
-              }
-              if (context.mounted) {
-                context.read<AngelStatusBloc>().add(const AngelStatusFetchRequested());
-              }
-            },
-          ),
-          _ProfileTile(
-            icon: LucideIcons.gift,
-            label: 'Donation & gift history',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const DonationHistoryPage()),
+              },
             ),
-          ),
-          _ProfileTile(
-            icon: LucideIcons.bell,
-            label: 'Notification preferences',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const NotificationPreferencesPage()),
-            ),
-          ),
-          _ProfileTile(
-            icon: LucideIcons.helpCircle,
-            label: 'Support',
-            onTap: () => openUrl(
-              'mailto:eastindiacoding@gmail.com?subject=${Uri.encodeComponent('Support request - Angelic Friends')}',
-            ),
-          ),
-          _ProfileTile(
-            icon: LucideIcons.fileText,
-            label: 'Privacy policy & terms',
-            // TODO: point at the real hosted privacy policy / terms once
-            // they exist — placeholder destination for now.
-            onTap: () => openUrl('https://google.com'),
-          ),
-          const Divider(),
-          _ProfileTile(
-            icon: LucideIcons.logOut,
-            label: 'Sign out',
-            onTap: () async {
-              final authRepository = context.read<AuthRepository>();
-              final messenger = ScaffoldMessenger.of(context);
-              final navigator = Navigator.of(context, rootNavigator: true);
-              final result = await authRepository.signOut();
-              result.fold(
-                (failure) => messenger.showSnackBar(SnackBar(content: Text(failure.message))),
-                // `_AppRoot`'s StreamBuilder swaps to OnboardingIntroPage once
-                // the auth stream reflects this, but that swap only replaces
-                // the base route — if the user reached this tile with other
-                // pages pushed on top (dog detail, chat, ...), those would
-                // otherwise still cover it. Popping to root makes sure it's
-                // actually visible.
-                (_) => navigator.popUntil((route) => route.isFirst),
-              );
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -163,7 +201,9 @@ class _AngelStatusCard extends StatelessWidget {
 
     if (!purchasesService.isAvailable) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Purchases are not available on this platform.')),
+        const SnackBar(
+          content: Text('Purchases are not available on this platform.'),
+        ),
       );
       return;
     }
@@ -171,7 +211,9 @@ class _AngelStatusCard extends StatelessWidget {
     try {
       await RevenueCatUI.presentPaywall();
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text("Couldn't open the paywall: $e")));
+      messenger.showSnackBar(
+        SnackBar(content: Text("Couldn't open the paywall: $e")),
+      );
     }
 
     if (!context.mounted) return;
@@ -186,9 +228,9 @@ class _AngelStatusCard extends StatelessWidget {
       builder: (context, state) {
         return switch (state) {
           AngelStatusInitial() || AngelStatusLoading() => const NeoBox(
-              padding: EdgeInsets.all(AppSpacing.md),
-              child: Center(child: CupertinoActivityIndicator()),
-            ),
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Center(child: CupertinoActivityIndicator()),
+          ),
           AngelStatusFailure() => const SizedBox.shrink(),
           AngelStatusLoaded(:final subscription) =>
             subscription != null && subscription.isActive
@@ -199,12 +241,17 @@ class _AngelStatusCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Not an Angel yet', style: theme.textTheme.titleMedium),
+                        Text(
+                          'Not an Angel yet',
+                          style: theme.textTheme.titleMedium,
+                        ),
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           'Become an Angel to get monthly credits you can pledge to any '
                           'dogs you choose.',
-                          style: theme.textTheme.bodySmall?.copyWith(color: AppColors.bodyGray),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.bodyGray,
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         SizedBox(
@@ -243,10 +290,15 @@ class _ActiveAngelCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Angel · \$${subscription.monthlyCredits}/mo', style: theme.textTheme.titleMedium),
+                Text(
+                  'Angel · \$${subscription.monthlyCredits}/mo',
+                  style: theme.textTheme.titleMedium,
+                ),
                 Text(
                   '${subscription.availableCredits} credits available to pledge',
-                  style: theme.textTheme.bodySmall?.copyWith(color: AppColors.bodyGray),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.bodyGray,
+                  ),
                 ),
               ],
             ),
@@ -258,7 +310,11 @@ class _ActiveAngelCard extends StatelessWidget {
 }
 
 class _ProfileTile extends StatelessWidget {
-  const _ProfileTile({required this.icon, required this.label, required this.onTap});
+  const _ProfileTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String label;

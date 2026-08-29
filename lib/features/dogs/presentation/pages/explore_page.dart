@@ -61,7 +61,7 @@ class _ExploreView extends StatelessWidget {
                     'hello $name,',
                     style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.bodyGray),
                   ),
-                  Text('Pets waiting for you', style: theme.textTheme.headlineSmall),
+                  Text('Sponsor a Special Pup', style: theme.textTheme.headlineSmall),
                 ],
               ),
             ),
@@ -136,20 +136,13 @@ class _ExploreFeed extends StatelessWidget {
             AppSpacing.md,
             AppSpacing.sm,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Sponsor a Special Pup', style: Theme.of(context).textTheme.displaySmall),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'These brave senior and special needs dogs are looking for '
-                'long-term sponsors to help with their ongoing care, treats, '
-                'and plenty of love.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.bodyGray),
-              ),
-            ],
+          child: Text(
+            'These brave senior and special needs dogs are looking for '
+            'long-term sponsors to help with their ongoing care, treats, '
+            'and plenty of love.',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.bodyGray, fontSize: 13),
           ),
         ),
         for (final item in items)
