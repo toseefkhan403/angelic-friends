@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
@@ -263,7 +264,7 @@ class _DetailPanel extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               NeoIconButton(
-                onPressed: () => _showComingSoon(context),
+                onPressed: () => _shareDog(dog),
                 semanticLabel: 'Share',
                 size: NeoButtonSize.small,
                 icon: const Icon(LucideIcons.share2),
@@ -529,6 +530,13 @@ IconData _iconFor(String key) {
   };
 }
 
-void _showComingSoon(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Coming soon')));
+Future<void> _shareDog(Dog dog) {
+  return SharePlus.instance.share(
+    ShareParams(
+      subject: 'Meet ${dog.name}',
+      text: 'Meet ${dog.name}, a ${dog.breed} in need of some love.\n\n'
+          '${dog.story}\n\n'
+          "Become ${dog.name}'s Angelic Friend and help fund their care.",
+    ),
+  );
 }

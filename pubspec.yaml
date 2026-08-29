@@ -92,6 +92,12 @@ dependencies:
   # Confetti burst on the post-sponsorship celebration dialog
   confetti: ^0.8.0
 
+  # Native share sheet (dog detail page's "Share" button)
+  share_plus: ^13.3.0
+
+  # On-device storage for local-only settings (notification preferences)
+  shared_preferences: ^2.5.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

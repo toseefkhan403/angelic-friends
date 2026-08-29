@@ -43,7 +43,7 @@ class WhoTheseDogsSlide extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           if (highlights.isNotEmpty)
             SizedBox(
-              height: 250,
+              height: UpdateHighlightCard.height + 30,
               child: AutoScrollingRow(
                 itemCount: highlights.length,
                 itemWidth: 160,

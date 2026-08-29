@@ -8,16 +8,16 @@ import 'package:sponsor_a_dog/core/auth/auth_repository.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
+import 'package:sponsor_a_dog/core/utils/url_launcher_util.dart';
 import 'package:sponsor_a_dog/core/widgets/tab_refresh_listener.dart';
 import 'package:sponsor_a_dog/features/angel/domain/entities/angel_subscription.dart';
 import 'package:sponsor_a_dog/features/angel/domain/repositories/angel_repository.dart';
 import 'package:sponsor_a_dog/features/angel/domain/usecases/get_my_angel_subscription.dart';
 import 'package:sponsor_a_dog/features/profile/presentation/bloc/angel_status_bloc.dart';
+import 'package:sponsor_a_dog/features/profile/presentation/pages/donation_history_page.dart';
+import 'package:sponsor_a_dog/features/profile/presentation/pages/notification_preferences_page.dart';
 
-/// The "Profile" tab. Lays out the sections from PRODUCT_SPEC.md §4.11;
-/// most are not wired up yet — see docs/DATABASE_SCHEMA.md for what's
-/// still missing beyond auth (sign-in/out is backed by Supabase auth) and
-/// the Angel subscription status (backed by [AngelStatusBloc]).
+/// The "Profile" tab. Lays out the sections from PRODUCT_SPEC.md §4.11.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({this.isActive = true, super.key});
 
@@ -78,20 +78,54 @@ class _ProfileView extends StatelessWidget {
           const _AngelStatusCard(),
           const SizedBox(height: AppSpacing.lg),
           const Divider(),
-          const _ProfileTile(
+          _ProfileTile(
             icon: LucideIcons.award,
             label: 'Manage subscription',
+            onTap: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                await RevenueCatUI.presentCustomerCenter();
+              } catch (e) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text("Couldn't open subscription management: $e")),
+                );
+                return;
+              }
+              if (context.mounted) {
+                context.read<AngelStatusBloc>().add(const AngelStatusFetchRequested());
+              }
+            },
           ),
-          const _ProfileTile(
+          _ProfileTile(
             icon: LucideIcons.gift,
             label: 'Donation & gift history',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DonationHistoryPage()),
+            ),
           ),
-          const _ProfileTile(
+          _ProfileTile(
             icon: LucideIcons.bell,
             label: 'Notification preferences',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationPreferencesPage()),
+            ),
           ),
-          const _ProfileTile(icon: LucideIcons.helpCircle, label: 'Support'),
-          const _ProfileTile(icon: LucideIcons.fileText, label: 'Privacy policy & terms'),
+          _ProfileTile(
+            icon: LucideIcons.helpCircle,
+            label: 'Support',
+            onTap: () => openUrl(
+              'mailto:eastindiacoding@gmail.com?subject=${Uri.encodeComponent('Support request - Angelic Friends')}',
+            ),
+          ),
+          _ProfileTile(
+            icon: LucideIcons.fileText,
+            label: 'Privacy policy & terms',
+            // TODO: point at the real hosted privacy policy / terms once
+            // they exist — placeholder destination for now.
+            onTap: () => openUrl('https://google.com'),
+          ),
           const Divider(),
           _ProfileTile(
             icon: LucideIcons.logOut,
@@ -224,11 +258,11 @@ class _ActiveAngelCard extends StatelessWidget {
 }
 
 class _ProfileTile extends StatelessWidget {
-  const _ProfileTile({required this.icon, required this.label, this.onTap});
+  const _ProfileTile({required this.icon, required this.label, required this.onTap});
 
   final IconData icon;
   final String label;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -237,10 +271,7 @@ class _ProfileTile extends StatelessWidget {
       leading: Icon(icon, color: AppColors.ink),
       title: Text(label),
       trailing: const Icon(LucideIcons.chevronRight, color: AppColors.bodyGray),
-      onTap: onTap ??
-          () => ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Coming soon'))),
+      onTap: onTap,
     );
   }
 }

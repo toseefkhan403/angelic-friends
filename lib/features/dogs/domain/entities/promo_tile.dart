@@ -9,16 +9,18 @@ class PromoTile extends Equatable {
     required this.subtitle,
     required this.ctaLabel,
     required this.insertAfterIndex,
+    this.imageUrl,
   });
 
   final String id;
   final String title;
   final String subtitle;
   final String ctaLabel;
+  final String? imageUrl;
 
   /// 0-based position in the dog list after which this tile is rendered.
   final int insertAfterIndex;
 
   @override
-  List<Object?> get props => [id, title, subtitle, ctaLabel, insertAfterIndex];
+  List<Object?> get props => [id, title, subtitle, ctaLabel, insertAfterIndex, imageUrl];
 }

@@ -7,12 +7,14 @@ class PromoTileModel {
     required this.subtitle,
     required this.ctaLabel,
     required this.insertAfterIndex,
+    this.imageUrl,
   });
 
   final String id;
   final String title;
   final String subtitle;
   final String ctaLabel;
+  final String? imageUrl;
   final int insertAfterIndex;
 
   factory PromoTileModel.fromJson(Map<String, dynamic> json) => PromoTileModel(
@@ -20,6 +22,7 @@ class PromoTileModel {
         title: json['title'] as String,
         subtitle: json['subtitle'] as String,
         ctaLabel: json['cta_label'] as String,
+        imageUrl: json['image_url'] as String?,
         insertAfterIndex: (json['insert_after_index'] as num).toInt(),
       );
 
@@ -28,6 +31,7 @@ class PromoTileModel {
         title: title,
         subtitle: subtitle,
         ctaLabel: ctaLabel,
+        imageUrl: imageUrl,
         insertAfterIndex: insertAfterIndex,
       );
 }

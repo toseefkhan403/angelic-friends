@@ -8,11 +8,14 @@ import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_media.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_update_highlight.dart';
 
 /// A single card in the real-update marquee: photo/video thumbnail, dog
-/// name, care tag, and short caption. Shared by any onboarding slide that
-/// shows this marquee (see `who_these_dogs_slide.dart` and
-/// `marquee_name_capture_slide.dart`).
+/// name, care tag, and short caption. Used by `who_these_dogs_slide.dart`'s
+/// [AutoScrollingRow], which lays cards out in a [Row] — a fixed overall
+/// height keeps every card the same size regardless of whether a given
+/// highlight has a care tag or caption, so the row doesn't look uneven.
 class UpdateHighlightCard extends StatelessWidget {
   const UpdateHighlightCard({required this.highlight, super.key});
+
+  static const height = 260.0;
 
   final DogUpdateHighlight highlight;
 
@@ -23,55 +26,60 @@ class UpdateHighlightCard extends StatelessWidget {
     final thumbnailUrl =
         media.mediaType == DogMediaType.video ? (media.thumbnailUrl ?? media.url) : media.url;
 
-    return NeoBox(
-      padding: EdgeInsets.zero,
-      shadowOffset: Offset.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AspectRatio(
-            aspectRatio: 4 / 3,
-            child: CachedNetworkImage(
-              imageUrl: thumbnailUrl,
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) => Container(
-                color: AppColors.neutralFill,
-                child: const Icon(LucideIcons.image, color: AppColors.bodyGray),
+    return SizedBox(
+      height: height,
+      child: NeoBox(
+        padding: EdgeInsets.zero,
+        shadowOffset: Offset.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 1,
+              child: CachedNetworkImage(
+                imageUrl: thumbnailUrl,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => Container(
+                  color: AppColors.neutralFill,
+                  child: const Icon(LucideIcons.image, color: AppColors.bodyGray),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (highlight.careTag != null) ...[
-                  NeoBadge(child: Text(highlight.careTag!)),
-                  const SizedBox(height: 4),
-                ],
-                Text(
-                  highlight.dogName,
-                  style: theme.textTheme.titleSmall,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (highlight.media.caption != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    highlight.media.caption!,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.bodyGray,
-                      fontStyle: FontStyle.italic,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (highlight.careTag != null) ...[
+                      NeoBadge(child: Text(highlight.careTag!)),
+                      const SizedBox(height: 4),
+                    ],
+                    Text(
+                      highlight.dogName,
+                      style: theme.textTheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
-              ],
+                    if (highlight.media.caption != null) ...[
+                      const SizedBox(height: 4),
+                      Expanded(
+                        child: Text(
+                          highlight.media.caption!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.bodyGray,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

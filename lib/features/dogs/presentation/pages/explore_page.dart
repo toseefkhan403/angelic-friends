@@ -169,12 +169,8 @@ class _ExploreFeed extends StatelessWidget {
               ),
             PromoTile() => PromoTileCard(
                 tile: item,
-                onTap: () {
-                  analytics.logEvent('promo_tile_tapped', parameters: {'tile_id': item.id});
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Thank you for your support!')),
-                  );
-                },
+                onTap: () =>
+                    analytics.logEvent('promo_tile_tapped', parameters: {'tile_id': item.id}),
               ),
             _ => const SizedBox.shrink(),
           },
