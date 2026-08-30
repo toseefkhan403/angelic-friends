@@ -150,7 +150,8 @@ where dog_id in (
   'a7c3e9d5-1f6b-4a82-9d4c-3b8e5f2a6c17',
   'b7e5a1f0-6c2d-4a89-9e3f-1d4c8a2b7f60',
   '73eda24d-87be-405a-9852-5d576119f1d5',
-  'd9a2c6e1-3f8b-4d5a-9c1e-7b6f4a2d8e93'
+  'd9a2c6e1-3f8b-4d5a-9c1e-7b6f4a2d8e93',
+  '1f6a8c3d-7b2e-4f91-9a5c-3d6e8b1f4a72'
 );
 
 insert into public.dog_media (dog_id, media_type, url, thumbnail_url, sort_order, caption) values
@@ -175,7 +176,10 @@ insert into public.dog_media (dog_id, media_type, url, thumbnail_url, sort_order
   ('73eda24d-87be-405a-9852-5d576119f1d5', 'image', 'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/dogs/titli-2.png', null, 1,
    'Titli took her evening walk at exactly her own pace today, and not a step faster.'),
   ('d9a2c6e1-3f8b-4d5a-9c1e-7b6f4a2d8e93', 'image', 'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/dogs/mareez.png', null, 0,
-   'Mareez spent the afternoon in his favorite sunny spot, watching the world go by.');
+   'Mareez spent the afternoon in his favorite sunny spot, watching the world go by.'),
+  ('1f6a8c3d-7b2e-4f91-9a5c-3d6e8b1f4a72', 'image', 'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/dogs/sheela-1.png', null, 0,
+   'Sheela soaked up a slow, sunny afternoon today, exactly the way she likes it.'),
+  ('1f6a8c3d-7b2e-4f91-9a5c-3d6e8b1f4a72', 'image', 'https://sfuclalozufdtiatcrwz.supabase.co/storage/v1/object/public/dog-media/dogs/sheela-2.png', null, 1, null);
 
 -- ============================================================
 -- promo_tiles

@@ -15,7 +15,7 @@ import 'package:sponsor_a_dog/features/dogs/domain/entities/dog_update_highlight
 class UpdateHighlightCard extends StatelessWidget {
   const UpdateHighlightCard({required this.highlight, super.key});
 
-  static const height = 260.0;
+  static const height = 290.0;
 
   final DogUpdateHighlight highlight;
 

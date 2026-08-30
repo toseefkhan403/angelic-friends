@@ -90,13 +90,13 @@ class SponsoredDogCard extends StatelessWidget {
                       width: double.infinity,
                       child: NeoButton(
                         onPressed: onOpenChat,
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.bone, size: 16),
+                            Icon(LucideIcons.mail, size: 16),
                             SizedBox(width: 6),
-                            Text('Send Treat'),
+                            Text('Chat about ${dog.name}'),
                           ],
                         ),
                       ),

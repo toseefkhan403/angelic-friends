@@ -53,7 +53,10 @@ class LetterSlide extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             slide.subtitle,
-            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           for (var i = 0; i < _steps.length; i++)

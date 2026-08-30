@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sponsor_a_dog/core/analytics/analytics_service.dart';
 import 'package:sponsor_a_dog/core/auth/auth_repository.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
-import 'package:sponsor_a_dog/core/navigation/home_shell_page.dart';
 import 'package:sponsor_a_dog/core/widgets/async_state_view.dart';
 import 'package:sponsor_a_dog/core/widgets/page_dots_indicator.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
@@ -61,12 +60,18 @@ class _OnboardingViewState extends State<_OnboardingView> {
         child: BlocConsumer<OnboardingBloc, OnboardingState>(
           listenWhen: (previous, current) => previous.submitStatus != current.submitStatus,
           listener: (context, state) {
-            if (state.submitStatus == OnboardingCompletionStatus.success) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const HomeShellPage()),
-                (route) => false,
-              );
-            } else if (state.submitStatus == OnboardingCompletionStatus.failure &&
+            // No manual navigation to HomeShellPage on success: _AppRoot's
+            // own authStateChanges StreamBuilder is the single source of
+            // truth for onboarding <-> home, and it's already listening
+            // above this page in the tree — it swaps automatically the
+            // moment a real Supabase session exists. Navigating manually
+            // here used to remove _AppRoot from the stack entirely (via
+            // pushAndRemoveUntil), which broke sign-out ever returning to
+            // onboarding, and — for Apple sign-in's Android browser-redirect
+            // fallback — fired on a mere "browser launched successfully",
+            // not on an actual completed sign-in, pushing straight into the
+            // app even when the user cancelled or the sign-in failed.
+            if (state.submitStatus == OnboardingCompletionStatus.failure &&
                 state.submitErrorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.submitErrorMessage!)),

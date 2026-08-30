@@ -15,6 +15,13 @@ abstract class AuthRepository {
   /// checked in that order.
   String? get displayName;
 
+  /// True iff the signed-in user's auth `app_metadata` carries
+  /// `is_admin: true`. `app_metadata` (not `user_metadata`) because it isn't
+  /// client-writable — it's flipped on once via a manual SQL update, never
+  /// through the app. Gates visibility of the "Admin" tile in Profile; RLS
+  /// is the real enforcement either way.
+  bool get isAdmin;
+
   Future<Either<Failure, void>> signInAnonymouslyWithName(String name);
 
   /// Native Google sign-in on every platform, via `google_sign_in` +

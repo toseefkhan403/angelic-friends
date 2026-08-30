@@ -61,6 +61,7 @@ class HeroSlide extends StatelessWidget {
                     slide.subtitle,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 13,
                     ),
                   ),
                 ],

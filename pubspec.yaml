@@ -98,6 +98,9 @@ dependencies:
   # On-device storage for local-only settings (notification preferences)
   shared_preferences: ^2.5.5
 
+  # Admin: pick a video from the gallery for weekly dog updates
+  image_picker: ^1.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

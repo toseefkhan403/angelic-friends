@@ -29,6 +29,9 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
+  bool get isAdmin => _client.auth.currentUser?.appMetadata['is_admin'] == true;
+
+  @override
   Future<Either<Failure, void>> signInAnonymouslyWithName(String name) async {
     try {
       await _client.auth.signInAnonymously(data: {'display_name': name});

@@ -8,6 +8,10 @@ import 'package:sponsor_a_dog/core/di/app_dependencies.dart';
 import 'package:sponsor_a_dog/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// self - i'll do these
+// ios testing - upload on codemagic
+// play store and app store listing and app submission
+// video about the app
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

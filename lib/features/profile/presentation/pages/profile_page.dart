@@ -10,6 +10,7 @@ import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
 import 'package:sponsor_a_dog/core/utils/url_launcher_util.dart';
 import 'package:sponsor_a_dog/core/widgets/tab_refresh_listener.dart';
+import 'package:sponsor_a_dog/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:sponsor_a_dog/features/angel/domain/entities/angel_subscription.dart';
 import 'package:sponsor_a_dog/features/angel/domain/repositories/angel_repository.dart';
 import 'package:sponsor_a_dog/features/angel/domain/usecases/get_my_angel_subscription.dart';
@@ -52,7 +53,9 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final displayName = context.read<AuthRepository>().displayName;
+    final authRepository = context.read<AuthRepository>();
+    final displayName = authRepository.displayName;
+    final isAdmin = authRepository.isAdmin;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -98,6 +101,17 @@ class _ProfileView extends StatelessWidget {
             const _AngelStatusCard(),
             const SizedBox(height: AppSpacing.lg),
             const Divider(),
+            if (isAdmin) ...[
+              _ProfileTile(
+                icon: LucideIcons.shieldCheck,
+                label: 'Admin',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AdminHomePage()),
+                ),
+              ),
+              const Divider(),
+            ],
             _ProfileTile(
               icon: LucideIcons.award,
               label: 'Manage subscription',

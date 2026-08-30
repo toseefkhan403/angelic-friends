@@ -99,10 +99,20 @@ class _AutoPlayVideoState extends State<AutoPlayVideo> {
               // bounds and paints outside the card unless clipping is
               // turned on.
               clipBehavior: Clip.hardEdge,
-              child: SizedBox(
-                width: _lastSize.width,
-                height: _lastSize.height,
-                child: VideoPlayer(_controller),
+              // On some Android devices the decoder's output buffer carries a
+              // thin strip of padding along one edge (commonly when the
+              // frame's dimensions aren't decoder-alignment-friendly) that
+              // the platform view doesn't crop, showing up as a persistent
+              // black bar. A small overscale — clipped by the FittedBox
+              // above — pushes that strip just outside the visible area
+              // without visibly cropping real content.
+              child: Transform.scale(
+                scale: 1.03,
+                child: SizedBox(
+                  width: _lastSize.width,
+                  height: _lastSize.height,
+                  child: VideoPlayer(_controller),
+                ),
               ),
             ),
           ),

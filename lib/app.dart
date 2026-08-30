@@ -9,6 +9,7 @@ import 'package:sponsor_a_dog/core/navigation/home_shell_page.dart';
 import 'package:sponsor_a_dog/core/purchases/purchases_service.dart';
 import 'package:sponsor_a_dog/core/theme/app_neo_theme.dart';
 import 'package:sponsor_a_dog/core/theme/app_theme.dart';
+import 'package:sponsor_a_dog/features/admin/domain/repositories/admin_repository.dart';
 import 'package:sponsor_a_dog/features/angel/domain/repositories/angel_repository.dart';
 import 'package:sponsor_a_dog/features/dogs/domain/repositories/dog_repository.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/repositories/onboarding_repository.dart';
@@ -37,6 +38,7 @@ class SponsorADogApp extends StatelessWidget {
           value: dependencies.sponsorshipRepository,
         ),
         RepositoryProvider<AngelRepository>.value(value: dependencies.angelRepository),
+        RepositoryProvider<AdminRepository>.value(value: dependencies.adminRepository),
       ],
       child: MaterialApp(
         title: 'Angelic Friends',
