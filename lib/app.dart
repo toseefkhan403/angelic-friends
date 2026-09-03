@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoTheme;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +55,42 @@ class SponsorADogApp extends StatelessWidget {
   }
 }
 
-class _AppRoot extends StatelessWidget {
+class _AppRoot extends StatefulWidget {
   const _AppRoot();
+
+  @override
+  State<_AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends State<_AppRoot> {
+  StreamSubscription<bool>? _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    final authRepository = context.read<AuthRepository>();
+    final purchasesService = context.read<PurchasesService>();
+    // `createAppDependencies()` already identifies RevenueCat with whoever
+    // was signed in at cold-start; this covers every sign-in/out that
+    // happens *during* this app session (e.g. onboarding), which the
+    // one-shot startup call can't see. Without it, purchases stay attributed
+    // to RevenueCat's anonymous id and `revenuecat-webhook` has no real
+    // Supabase user id to grant credits against.
+    _authSubscription = authRepository.authStateChanges.listen((isSignedIn) {
+      final userId = authRepository.currentUserId;
+      if (isSignedIn && userId != null) {
+        purchasesService.logIn(userId);
+      } else {
+        purchasesService.logOut();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

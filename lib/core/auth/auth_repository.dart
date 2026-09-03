@@ -5,6 +5,10 @@ abstract class AuthRepository {
   /// Whether there is a live Supabase auth session right now.
   bool get isSignedIn;
 
+  /// The signed-in user's id, or null if signed out. Used to identify the
+  /// user to RevenueCat (see `PurchasesService.logIn`).
+  String? get currentUserId;
+
   /// Emits the current sign-in state whenever the underlying auth session
   /// changes (sign in, sign out, token refresh, etc.).
   Stream<bool> get authStateChanges;

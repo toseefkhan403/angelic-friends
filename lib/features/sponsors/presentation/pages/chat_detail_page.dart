@@ -342,16 +342,23 @@ class _FullScreenVideoPage extends StatefulWidget {
 class _FullScreenVideoPageState extends State<_FullScreenVideoPage> {
   late final VideoPlayerController _controller;
   bool _initialized = false;
+  bool _failed = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
-        if (!mounted) return;
-        setState(() => _initialized = true);
-        _controller.play();
-      });
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+    _controller.initialize().timeout(const Duration(seconds: 20)).then((_) {
+      if (!mounted) return;
+      setState(() => _initialized = true);
+      _controller.play();
+    }).catchError((_) {
+      // A codec/bitrate the device's hardware decoder can't handle often
+      // hangs rather than throwing, so the timeout above (not just this
+      // catch) is what keeps the user from staring at a spinner forever.
+      if (!mounted) return;
+      setState(() => _failed = true);
+    });
   }
 
   @override
@@ -396,7 +403,16 @@ class _FullScreenVideoPageState extends State<_FullScreenVideoPage> {
                   ),
                 ),
               )
-            : const CupertinoActivityIndicator(color: Colors.white),
+            : _failed
+                ? const Padding(
+                    padding: EdgeInsets.all(AppSpacing.lg),
+                    child: Text(
+                      "Couldn't play this video. It may not be supported on this device.",
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : const CupertinoActivityIndicator(color: Colors.white),
       ),
     );
   }

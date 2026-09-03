@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/error/failures.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
@@ -175,22 +176,46 @@ class _WeeklyUpdateComposerSheetState extends State<_WeeklyUpdateComposerSheet> 
   final _captionController = TextEditingController();
   File? _pickedVideo;
   bool _isSending = false;
+  bool _isCompressing = false;
 
   @override
   void dispose() {
     _captionController.dispose();
+    VideoCompress.deleteAllCache();
     super.dispose();
   }
 
   Future<void> _pickVideo() async {
     final picked = await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (picked == null) return;
-    setState(() => _pickedVideo = File(picked.path));
+
+    setState(() => _isCompressing = true);
+    // Raw phone camera exports (4K HEVC at 60+ Mbps) exceed what most
+    // Android hardware decoders can play back — transcode down before
+    // upload so sponsors' video_player doesn't just hang. Falls back to the
+    // original file if compression fails rather than blocking the send.
+    File? compressed;
+    try {
+      final info = await VideoCompress.compressVideo(
+        picked.path,
+        quality: VideoQuality.Res1280x720Quality,
+        deleteOrigin: false,
+      );
+      compressed = info?.file;
+    } catch (_) {
+      compressed = null;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _pickedVideo = compressed ?? File(picked.path);
+      _isCompressing = false;
+    });
   }
 
   Future<void> _send() async {
     final video = _pickedVideo;
-    if (video == null || _isSending) return;
+    if (video == null || _isSending || _isCompressing) return;
 
     setState(() => _isSending = true);
     final adminRepository = context.read<AdminRepository>();
@@ -253,8 +278,14 @@ class _WeeklyUpdateComposerSheetState extends State<_WeeklyUpdateComposerSheet> 
               SizedBox(
                 width: double.infinity,
                 child: NeoButton(
-                  onPressed: _isSending ? null : _pickVideo,
-                  child: Text(_pickedVideo == null ? 'Pick a video' : 'Change video'),
+                  onPressed: _isSending || _isCompressing ? null : _pickVideo,
+                  child: _isCompressing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CupertinoActivityIndicator(),
+                        )
+                      : Text(_pickedVideo == null ? 'Pick a video' : 'Change video'),
                 ),
               ),
               if (_pickedVideo != null) ...[
@@ -275,7 +306,7 @@ class _WeeklyUpdateComposerSheetState extends State<_WeeklyUpdateComposerSheet> 
               SizedBox(
                 width: double.infinity,
                 child: NeoButton(
-                  onPressed: _pickedVideo == null || _isSending ? null : _send,
+                  onPressed: _pickedVideo == null || _isSending || _isCompressing ? null : _send,
                   child: _isSending
                       ? const SizedBox(
                           width: 20,

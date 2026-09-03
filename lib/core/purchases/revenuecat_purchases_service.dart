@@ -30,6 +30,24 @@ class RevenueCatPurchasesService implements PurchasesService {
   }
 
   @override
+  Future<void> logIn(String appUserId) async {
+    try {
+      await Purchases.logIn(appUserId);
+    } catch (_) {
+      // Best-effort — see interface doc.
+    }
+  }
+
+  @override
+  Future<void> logOut() async {
+    try {
+      await Purchases.logOut();
+    } catch (_) {
+      // Best-effort — see interface doc.
+    }
+  }
+
+  @override
   Future<Either<Failure, Offerings>> getOfferings() async {
     try {
       final offerings = await Purchases.getOfferings();

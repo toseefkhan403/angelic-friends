@@ -15,6 +15,12 @@ class NoopPurchasesService implements PurchasesService {
   Future<void> initialize({String? appUserId}) async {}
 
   @override
+  Future<void> logIn(String appUserId) async {}
+
+  @override
+  Future<void> logOut() async {}
+
+  @override
   Future<Either<Failure, Offerings>> getOfferings() async =>
       const Left(ServerFailure('Purchases are not supported on this platform'));
 

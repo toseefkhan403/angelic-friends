@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ^3.12.2
@@ -101,6 +101,11 @@ dependencies:
   # Admin: pick a video from the gallery for weekly dog updates
   image_picker: ^1.1.2
 
+  # Admin: transcode picked videos before upload — raw phone camera exports
+  # (4K HEVC at 60+ Mbps) exceed what most Android hardware decoders can
+  # play back, which is what left sponsors' video_player stuck on a spinner.
+  video_compress: ^3.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -116,6 +121,32 @@ dev_dependencies:
   build_runner: ^2.9.0
   freezed: ^3.2.3
   json_serializable: ^6.11.1
+
+  # App icon generation (dev-only — run `dart run flutter_launcher_icons`)
+  flutter_launcher_icons: ^0.14.4
+
+  # Native splash screen generation (dev-only — run
+  # `dart run flutter_native_splash:create`)
+  flutter_native_splash: ^2.4.6
+
+# flutter_launcher_icons config: source art lives in assets/icon/ (not
+# bundled as a runtime asset — only read at generation time).
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+# flutter_native_splash config: same white-background logo as the app icon.
+# Android 12+'s splash API draws its own circular icon backdrop, so it needs
+# the transparent-background foreground image (not the white-square one).
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/icon/app_icon.png"
+  android_12:
+    image: "assets/icon/app_icon_foreground.png"
+    icon_background_color: "#FFFFFF"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
