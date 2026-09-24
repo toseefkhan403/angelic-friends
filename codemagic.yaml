@@ -1,0 +1,54 @@
+workflows:
+  ios-release:
+    name: iOS Release (TestFlight)
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    # One-time setup required in the Codemagic UI before this workflow can
+    # run (none of this can be done from a CSR/OpenSSL flow on Windows):
+    #   1. Connect this repo to a Codemagic app.
+    #   2. Team settings → Integrations → App Store Connect → add an API key
+    #      (Keys, Users and Access → Keys in App Store Connect; role "App
+    #      Manager" or higher). Name the integration exactly "codemagic"
+    #      to match the reference below, or rename the line below to match.
+    #   3. Create the app in App Store Connect with bundle id
+    #      com.sponsoradog.sponsorADog (must exist before automatic signing
+    #      or TestFlight submission can work).
+    # Codemagic then generates and manages the Apple Distribution
+    # certificate + provisioning profile automatically on every build —
+    # nothing to create manually in the Apple Developer portal.
+    integrations:
+      app_store_connect: codemagic
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.sponsoradog.sponsorADog
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: find . -name "Podfile" -execdir pod install \;
+
+      - name: Flutter build ipa
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      # Leave submit_to_testflight: false until the App Store Connect app
+      # record exists (see setup note above) — otherwise this step fails
+      # rather than the build. Flip to true once that's in place.
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
