@@ -71,9 +71,6 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
 
     publishing:
-      # Leave submit_to_testflight: false until the App Store Connect app
-      # record exists (see setup note above) — otherwise this step fails
-      # rather than the build. Flip to true once that's in place.
       app_store_connect:
         auth: integration
-        submit_to_testflight: false
+        submit_to_testflight: true
