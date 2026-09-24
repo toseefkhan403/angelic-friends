@@ -10,9 +10,9 @@ workflows:
     #   2. Team settings → Integrations → App Store Connect → add an API key
     #      (App Store Connect → Users and Access → Keys). Role must be
     #      "App Manager" or higher — "Developer"/lower roles cannot create
-    #      certificates or provisioning profiles via the API. Name the
-    #      integration exactly "codemagic" to match the reference below, or
-    #      rename the line below to match whatever you name it.
+    #      certificates or provisioning profiles via the API. Integration is
+    #      named "Codemagic API Key" below — update both this comment and
+    #      the reference below if you rename it in the Codemagic UI.
     #   3. Create the app in App Store Connect with bundle id
     #      com.sponsoradog.sponsorADog (the App ID must already exist in
     #      the Apple Developer portal — Codemagic can create certs/profiles
@@ -26,7 +26,7 @@ workflows:
     # script sequence mirrors Codemagic's own official
     # ios-automatic-code-signing-demo-project.
     integrations:
-      app_store_connect: codemagic
+      app_store_connect: "Codemagic API Key"
 
     environment:
       vars:
