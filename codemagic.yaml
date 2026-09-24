@@ -8,27 +8,43 @@ workflows:
     # run (none of this can be done from a CSR/OpenSSL flow on Windows):
     #   1. Connect this repo to a Codemagic app.
     #   2. Team settings → Integrations → App Store Connect → add an API key
-    #      (Keys, Users and Access → Keys in App Store Connect; role "App
-    #      Manager" or higher). Name the integration exactly "codemagic"
-    #      to match the reference below, or rename the line below to match.
+    #      (App Store Connect → Users and Access → Keys). Role must be
+    #      "App Manager" or higher — "Developer"/lower roles cannot create
+    #      certificates or provisioning profiles via the API. Name the
+    #      integration exactly "codemagic" to match the reference below, or
+    #      rename the line below to match whatever you name it.
     #   3. Create the app in App Store Connect with bundle id
-    #      com.sponsoradog.sponsorADog (must exist before automatic signing
-    #      or TestFlight submission can work).
-    # Codemagic then generates and manages the Apple Distribution
-    # certificate + provisioning profile automatically on every build —
-    # nothing to create manually in the Apple Developer portal.
+    #      com.sponsoradog.sponsorADog (the App ID must already exist in
+    #      the Apple Developer portal — Codemagic can create certs/profiles
+    #      on demand, but not the App ID itself).
+    #
+    # The "Fetch signing files" script below is what actually creates the
+    # Apple Distribution certificate + provisioning profile on first run
+    # (via --create) — the declarative environment.ios_signing shortcut
+    # only matches against signing files Codemagic already has on file, so
+    # it fails with "No matching profiles found" on a brand new app. This
+    # script sequence mirrors Codemagic's own official
+    # ios-automatic-code-signing-demo-project.
     integrations:
       app_store_connect: codemagic
 
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.sponsoradog.sponsorADog
+      vars:
+        BUNDLE_ID: com.sponsoradog.sponsorADog
       flutter: stable
       xcode: latest
       cocoapods: default
 
     scripts:
+      - name: Set up keychain for code signing
+        script: keychain initialize
+
+      - name: Fetch signing files
+        script: app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
+
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
 
