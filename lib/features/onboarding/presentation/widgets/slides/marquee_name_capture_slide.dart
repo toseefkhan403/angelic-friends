@@ -80,9 +80,7 @@ class _MarqueeNameCaptureSlideState extends State<MarqueeNameCaptureSlide> {
   }
 }
 
-// apple is unused while the Apple sign-in button below is commented out;
-// kept so re-enabling it is a one-line uncomment.
-enum _PendingProvider { google, apple } // ignore: unused_field
+enum _PendingProvider { google, apple }
 
 class _SignInOptions extends StatefulWidget {
   const _SignInOptions({required this.isSubmitting, required this.onContinueAsGuest});
@@ -129,25 +127,23 @@ class _SignInOptionsState extends State<_SignInOptions> {
                 : const Text('Continue with Google'),
           ),
         ),
-        // Commented out for now — see PendingProvider.apple/appleSignInRequested
-        // wiring below, left intact for a quick re-enable.
-        // const SizedBox(height: AppSpacing.sm),
-        // SizedBox(
-        //   width: double.infinity,
-        //   child: NeoButton(
-        //     onPressed: widget.isSubmitting
-        //         ? null
-        //         : () {
-        //             setState(() => _pending = _PendingProvider.apple);
-        //             context
-        //                 .read<OnboardingBloc>()
-        //                 .add(const OnboardingEvent.appleSignInRequested());
-        //           },
-        //     child: _pending == _PendingProvider.apple
-        //         ? const SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator())
-        //         : const Text('Continue with Apple'),
-        //   ),
-        // ),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          child: NeoButton(
+            onPressed: widget.isSubmitting
+                ? null
+                : () {
+                    setState(() => _pending = _PendingProvider.apple);
+                    context
+                        .read<OnboardingBloc>()
+                        .add(const OnboardingEvent.appleSignInRequested());
+                  },
+            child: _pending == _PendingProvider.apple
+                ? const SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator())
+                : const Text('Continue with Apple'),
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         SizedBox(
           width: double.infinity,
