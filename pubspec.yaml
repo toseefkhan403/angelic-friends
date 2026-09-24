@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: ^3.12.2
@@ -101,10 +101,13 @@ dependencies:
   # Admin: pick a video from the gallery for weekly dog updates
   image_picker: ^1.1.2
 
-  # Admin: transcode picked videos before upload — raw phone camera exports
-  # (4K HEVC at 60+ Mbps) exceed what most Android hardware decoders can
-  # play back, which is what left sponsors' video_player stuck on a spinner.
-  video_compress: ^3.1.4
+  # Admin: transcode picked videos to H.264 before upload — raw phone camera
+  # exports (4K HEVC at 60+ Mbps) exceed what most Android hardware decoders
+  # can play back, which is what left sponsors' video_player stuck on a
+  # spinner. (Previously tried video_compress ^3.1.4 — reverted after it
+  # crashed natively on its "no transcode needed" fast-path, a known
+  # unfixed bug: github.com/jonataslaw/VideoCompress/issues/198.)
+  flutter_compress: ^2.0.0
 
 dev_dependencies:
   flutter_test:
