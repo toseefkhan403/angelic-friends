@@ -1,11 +1,11 @@
-/// RevenueCat "Angelic Friends" project (proj0f173a2f). Android points at
-/// the real Play Store app's production key — note this app has no
-/// registered Play Store products or service-account credentials yet, so
-/// purchases will fail until that's finished (see revenuecat_config
-/// follow-up work). iOS still points at the Test Store key until an App
-/// Store Connect app exists in RevenueCat.
+/// RevenueCat "Angelic Friends" project (proj0f173a2f). Both platforms now
+/// point at their real store apps' production keys, with the angel_10/20/50
+/// products registered and attached to the same packages/entitlement as the
+/// Test Store versions. Note: the iOS subscriptions haven't been submitted
+/// to Apple for review yet (no screenshot/first-build submission done), so
+/// only sandbox/TestFlight purchases will work until that's done.
 /// These are safe to ship client-side (they're public keys, not secrets).
 abstract final class RevenueCatConfig {
   static const String androidApiKey = 'goog_sdTcTKQiJElzOiRVlgsySOZpSkO';
-  static const String iosApiKey = 'test_VdpfNJaWxWxVgtKXaQUEeIyRbpH';
+  static const String iosApiKey = 'appl_JpNnntigVkVguiqmCErPDNaxPJP';
 }
