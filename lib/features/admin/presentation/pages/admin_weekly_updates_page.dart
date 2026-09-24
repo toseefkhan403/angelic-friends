@@ -5,9 +5,9 @@ import 'package:dartz/dartz.dart' show Either, Left;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_compress/flutter_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:video_compress/video_compress.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/core/error/failures.dart';
 import 'package:sponsor_a_dog/core/theme/app_colors.dart';
@@ -181,7 +181,7 @@ class _WeeklyUpdateComposerSheetState extends State<_WeeklyUpdateComposerSheet> 
   @override
   void dispose() {
     _captionController.dispose();
-    VideoCompress.deleteAllCache();
+    FlutterCompress.instance.clearCache();
     super.dispose();
   }
 
@@ -191,17 +191,22 @@ class _WeeklyUpdateComposerSheetState extends State<_WeeklyUpdateComposerSheet> 
 
     setState(() => _isCompressing = true);
     // Raw phone camera exports (4K HEVC at 60+ Mbps) exceed what most
-    // Android hardware decoders can play back — transcode down before
-    // upload so sponsors' video_player doesn't just hang. Falls back to the
-    // original file if compression fails rather than blocking the send.
+    // Android hardware decoders can play back — transcode to H.264 at a
+    // capped resolution before upload so sponsors' video_player doesn't
+    // just hang. Falls back to the original file if compression fails
+    // rather than blocking the send.
     File? compressed;
     try {
-      final info = await VideoCompress.compressVideo(
+      final result = await FlutterCompress.instance.compress(
         picked.path,
-        quality: VideoQuality.Res1280x720Quality,
-        deleteOrigin: false,
+        const VideoCompressConfig(
+          quality: CompressQuality.medium,
+          codec: VideoCodec.h264,
+          maxWidth: 1280,
+          maxHeight: 1280,
+        ),
       );
-      compressed = info?.file;
+      compressed = File(result.outputPath);
     } catch (_) {
       compressed = null;
     }
