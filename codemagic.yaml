@@ -17,6 +17,13 @@ workflows:
     #      com.sponsoradog.sponsorADog (the App ID must already exist in
     #      the Apple Developer portal — Codemagic can create certs/profiles
     #      on demand, but not the App ID itself).
+    #   4. Codemagic app → Environment variables → create a group named
+    #      "ios_signing_credentials" → add a var CERTIFICATE_PRIVATE_KEY,
+    #      marked Secure, containing a 2048-bit RSA private key (PEM, with
+    #      the BEGIN/END lines). `fetch-signing-files --create` needs this
+    #      to actually build the new certificate — without it, it fails
+    #      with "Cannot save Signing Certificates without certificate
+    #      private key" even though the API key itself is valid.
     #
     # The "Fetch signing files" script below is what actually creates the
     # Apple Distribution certificate + provisioning profile on first run
@@ -29,6 +36,8 @@ workflows:
       app_store_connect: "Codemagic API Key"
 
     environment:
+      groups:
+        - ios_signing_credentials # <-- CERTIFICATE_PRIVATE_KEY
       vars:
         BUNDLE_ID: com.sponsoradog.sponsorADog
       flutter: stable
