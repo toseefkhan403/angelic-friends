@@ -165,14 +165,14 @@ class _ProfileView extends StatelessWidget {
               icon: LucideIcons.fileText,
               label: 'Privacy policy',
               onTap: () => openUrl(
-                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/PRIVACY_POLICY.md',
+                'https://angelic-friends.framer.website/privacy-policy',
               ),
             ),
             _ProfileTile(
               icon: LucideIcons.scrollText,
               label: 'Terms of use (EULA)',
               onTap: () => openUrl(
-                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/EULA.md',
+                'https://angelic-friends.framer.website/terms-of-use',
               ),
             ),
             const Divider(),
