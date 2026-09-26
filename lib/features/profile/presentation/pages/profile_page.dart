@@ -170,9 +170,9 @@ class _ProfileView extends StatelessWidget {
             ),
             _ProfileTile(
               icon: LucideIcons.scrollText,
-              label: 'Terms of use',
+              label: 'Terms of use (EULA)',
               onTap: () => openUrl(
-                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/TERMS_OF_USE.md',
+                'https://github.com/toseefkhan403/angelic-friends/blob/main/docs/EULA.md',
               ),
             ),
             const Divider(),
