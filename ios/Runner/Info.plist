@@ -24,6 +24,21 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<!-- Reversed form of SocialAuthConfig.googleIosClientId — required
+					     by google_sign_in to receive the native auth redirect on iOS. -->
+					<string>com.googleusercontent.apps.761879030744-uuq0vt2rr8v7n0ncpvu073kfqhv5a4vh</string>
+				</array>
+			</dict>
+		</array>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSPhotoLibraryUsageDescription</key>

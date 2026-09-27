@@ -18,7 +18,8 @@ abstract final class SocialAuthConfig {
   /// Google Cloud Console OAuth client ID of type "iOS". Only used on
   /// iOS/macOS; required by `google_sign_in` there even though the web
   /// client id is what actually gets sent to Supabase.
-  static const String googleIosClientId = 'TODO-REPLACE-WITH-GOOGLE-IOS-CLIENT-ID';
+  static const String googleIosClientId =
+      '761879030744-uuq0vt2rr8v7n0ncpvu073kfqhv5a4vh.apps.googleusercontent.com';
 
   /// Apple's "Sign in with Apple" only has a real native flow on iOS/macOS.
   /// On Android there's no equivalent, so `signInWithApple` falls back to
