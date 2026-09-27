@@ -86,9 +86,10 @@ property, or safety of Angelic Friends, our users, or the animals in our care.
 We retain your account and sponsorship data for as long as your account is active.
 Pledged credits and their record are kept permanently once pledged to a dog or to the
 feeding fund, since they back a public funding total shown on that dog's page — this
-is by design and described in-app when you pledge. If you delete your account, your
-personal account data is removed; sponsorship and pledge totals may be retained in
-de-identified/aggregate form so that a dog's funding history stays accurate.
+is by design and described in-app when you pledge. If you delete your account, all of
+this — including sponsorships and pledges — is deleted immediately and permanently
+along with the rest of your account data; a dog's public funding total will decrease
+to reflect the removed pledge.
 
 ## 5. Your Choices
 
@@ -96,8 +97,8 @@ de-identified/aggregate form so that a dog's funding history stays accurate.
   preferences.
 - **Manage or cancel your subscription**: from Profile → Manage subscription, or
   directly through Google Play / the App Store.
-- **Delete your account**: contact us (below) to request deletion of your account and
-  associated personal data.
+- **Delete your account**: Profile → Delete account, in the App. This deletes your
+  account and data immediately — it's self-service, not a request we process later.
 - **Access or correct your data**: contact us and we'll help.
 
 ## 6. Children's Privacy
