@@ -198,9 +198,51 @@ class _ProfileView extends StatelessWidget {
                 );
               },
             ),
+            _ProfileTile(
+              icon: LucideIcons.trash2,
+              label: 'Delete account',
+              color: Colors.red.shade700,
+              onTap: () => _confirmDeleteAccount(context),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete your account?'),
+        content: const Text(
+          'This permanently deletes your sponsorships, messages, and profile, '
+          'and signs you out immediately. This cannot be undone — signing in '
+          'again afterward starts a brand-new account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text('Delete', style: TextStyle(color: Colors.red.shade700)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final authRepository = context.read<AuthRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final result = await authRepository.deleteAccount();
+    result.fold(
+      (failure) => messenger.showSnackBar(SnackBar(content: Text(failure.message))),
+      // Same reasoning as "Sign out" above — pop to root so the onboarding
+      // screen `_AppRoot` swaps to isn't hidden behind other pushed pages.
+      (_) => navigator.popUntil((route) => route.isFirst),
     );
   }
 }
@@ -328,18 +370,23 @@ class _ProfileTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    this.color,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
+  /// Overrides the icon/text color — used for the destructive "Delete
+  /// account" tile. Defaults to the normal ink color.
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: AppColors.ink),
-      title: Text(label),
+      leading: Icon(icon, color: color ?? AppColors.ink),
+      title: Text(label, style: color != null ? TextStyle(color: color) : null),
       trailing: const Icon(LucideIcons.chevronRight, color: AppColors.bodyGray),
       onTap: onTap,
     );

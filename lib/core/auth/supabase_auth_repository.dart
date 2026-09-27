@@ -144,4 +144,21 @@ class SupabaseAuthRepository implements AuthRepository {
       return Left(ServerFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> deleteAccount() async {
+    try {
+      await _client.rpc('delete_my_account');
+      // The auth.users row is already gone server-side (which itself
+      // revokes every session) — sign out locally too so the client's own
+      // state and `_AppRoot`'s auth stream reflect it immediately rather
+      // than waiting on a token refresh to fail.
+      await _client.auth.signOut();
+      return const Right(null);
+    } on AuthException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on PostgrestException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
 }

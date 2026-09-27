@@ -40,4 +40,13 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> signInWithApple();
 
   Future<Either<Failure, void>> signOut();
+
+  /// Permanently deletes the signed-in user's account and data
+  /// (App Store Guideline 5.1.1(v) / Play Console account-deletion
+  /// requirement) — sponsorships, messages, feeding-fund pledges, and the
+  /// underlying auth user itself, then signs out locally. Signing in again
+  /// afterward with the same Google/Apple identity creates a brand-new
+  /// account with no history, since the old one no longer exists. See
+  /// `delete_my_account()` in the migration.
+  Future<Either<Failure, void>> deleteAccount();
 }
