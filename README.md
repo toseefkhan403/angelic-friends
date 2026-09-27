@@ -4,6 +4,8 @@ A Flutter app that connects people with rescued and sheltered dogs through
 monthly "Angel" sponsorships, one-off feeding fund pledges, and direct chat
 with each dog's shelter/sanctuary team.
 
+**[Try it now on Google Play](http://play.google.com/store/apps/details?id=com.sponsoradog.sponsor_a_dog)** · App Store: coming soon
+
 ## Screenshots
 
 | | | |
