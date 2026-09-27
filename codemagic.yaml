@@ -1,0 +1,76 @@
+workflows:
+  ios-release:
+    name: iOS Release (TestFlight)
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    # One-time setup required in the Codemagic UI before this workflow can
+    # run (none of this can be done from a CSR/OpenSSL flow on Windows):
+    #   1. Connect this repo to a Codemagic app.
+    #   2. Team settings → Integrations → App Store Connect → add an API key
+    #      (App Store Connect → Users and Access → Keys). Role must be
+    #      "App Manager" or higher — "Developer"/lower roles cannot create
+    #      certificates or provisioning profiles via the API. Integration is
+    #      named "Codemagic API Key" below — update both this comment and
+    #      the reference below if you rename it in the Codemagic UI.
+    #   3. Create the app in App Store Connect with bundle id
+    #      com.sponsoradog.sponsorADog (the App ID must already exist in
+    #      the Apple Developer portal — Codemagic can create certs/profiles
+    #      on demand, but not the App ID itself).
+    #   4. Codemagic app → Environment variables → create a group named
+    #      "ios_signing_credentials" → add a var CERTIFICATE_PRIVATE_KEY,
+    #      marked Secure, containing a 2048-bit RSA private key (PEM, with
+    #      the BEGIN/END lines). `fetch-signing-files --create` needs this
+    #      to actually build the new certificate — without it, it fails
+    #      with "Cannot save Signing Certificates without certificate
+    #      private key" even though the API key itself is valid.
+    #
+    # The "Fetch signing files" script below is what actually creates the
+    # Apple Distribution certificate + provisioning profile on first run
+    # (via --create) — the declarative environment.ios_signing shortcut
+    # only matches against signing files Codemagic already has on file, so
+    # it fails with "No matching profiles found" on a brand new app. This
+    # script sequence mirrors Codemagic's own official
+    # ios-automatic-code-signing-demo-project.
+    integrations:
+      app_store_connect: "Codemagic API Key"
+
+    environment:
+      groups:
+        - ios_signing_credentials # <-- CERTIFICATE_PRIVATE_KEY
+      vars:
+        BUNDLE_ID: com.sponsoradog.sponsorADog
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Set up keychain for code signing
+        script: keychain initialize
+
+      - name: Fetch signing files
+        script: app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
+
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: find . -name "Podfile" -execdir pod install \;
+
+      - name: Flutter build ipa
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
