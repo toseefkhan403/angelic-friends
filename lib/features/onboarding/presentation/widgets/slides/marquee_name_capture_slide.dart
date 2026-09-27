@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, Tar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart' show AppleLogoPainter;
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/entities/onboarding_slide.dart';
 import 'package:sponsor_a_dog/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -159,10 +158,10 @@ class _SignInOptionsState extends State<_SignInOptions> {
         if (showApple) ...[
           SizedBox(
             width: double.infinity,
-            child: SignInWithAppleButton(
-              text: _pending == _PendingProvider.apple ? 'Signing in…' : 'Sign in with Apple',
+            child: _AppleSignInButton(
+              isLoading: _pending == _PendingProvider.apple,
               onPressed: widget.isSubmitting
-                  ? () {}
+                  ? null
                   : () {
                       setState(() => _pending = _PendingProvider.apple);
                       context
@@ -192,9 +191,67 @@ class _SignInOptionsState extends State<_SignInOptions> {
   }
 }
 
+/// A "Sign in with Apple" button matching Apple's black-button guidelines:
+/// black background, the official Apple logo, and SF Pro Text — the same
+/// font [_GoogleSignInButton] uses, so the two buttons read as a matched
+/// pair.
+/// https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple
+class _AppleSignInButton extends StatelessWidget {
+  const _AppleSignInButton({required this.onPressed, required this.isLoading});
+
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  static const _height = 44.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: _height,
+      child: Material(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: onPressed,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: isLoading
+                      ? const CupertinoActivityIndicator(color: Colors.white)
+                      : const CustomPaint(painter: AppleLogoPainter(color: Colors.white)),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    isLoading ? 'Signing in…' : 'Sign in with Apple',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      inherit: false,
+                      fontFamily: '.SF Pro Text',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// A "Sign in with Google" button following Google's branding guidelines:
 /// white background, grey outline, the official "G" mark, and "Sign in
-/// with Google" text in Roboto Medium.
+/// with Google" text in SF Pro Text (matching [_AppleSignInButton]).
 /// https://developers.google.com/identity/branding-guidelines
 class _GoogleSignInButton extends StatelessWidget {
   const _GoogleSignInButton({required this.onPressed, required this.isLoading});
@@ -237,8 +294,10 @@ class _GoogleSignInButton extends StatelessWidget {
                   child: Text(
                     isLoading ? 'Signing in…' : 'Sign in with Google',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.roboto(
-                      fontSize: 15,
+                    style: const TextStyle(
+                      inherit: false,
+                      fontFamily: '.SF Pro Text',
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: _textColor,
                     ),
