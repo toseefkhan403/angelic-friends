@@ -38,7 +38,12 @@ android {
         minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        // Android's marketing version has diverged from iOS's (which still
+        // uses flutter.versionName as-is, via pubspec.yaml's `version:` —
+        // see Info.plist's $(FLUTTER_BUILD_NAME)) — versionCode stays tied
+        // to pubspec.yaml's build number so both platforms keep sharing one
+        // auto-incrementing counter; only this name is overridden.
+        versionName = "1.0.1"
     }
 
     signingConfigs {

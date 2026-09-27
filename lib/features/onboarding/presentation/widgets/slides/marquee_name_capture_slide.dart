@@ -1,7 +1,11 @@
 import 'package:brutalist_ui/brutalist_ui.dart' show NeoButton, NeoTextField;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:sponsor_a_dog/core/constants/app_spacing.dart';
 import 'package:sponsor_a_dog/features/onboarding/domain/entities/onboarding_slide.dart';
 import 'package:sponsor_a_dog/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -38,44 +42,78 @@ class _MarqueeNameCaptureSlideState extends State<MarqueeNameCaptureSlide> {
         ) ==
         OnboardingCompletionStatus.submitting;
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.slide.eyebrow != null) SlideEyebrow(text: widget.slide.eyebrow!),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              widget.slide.title,
-              style: theme.textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              // The slide's own subtitle ("What should we call you?") only
-              // makes sense once the guest name field is showing — while the
-              // Google/Apple/Guest buttons are up, prompt for sign-in instead.
-              _showGuestNameField ? widget.slide.subtitle : 'Sign in to continue',
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            if (_showGuestNameField)
-              _GuestNameForm(
-                nameController: widget.nameController,
-                onNameChanged: widget.onNameChanged,
-                isSubmitting: isSubmitting,
-                onBack: () => setState(() => _showGuestNameField = false),
-              )
-            else
-              _SignInOptions(
-                isSubmitting: isSubmitting,
-                onContinueAsGuest: () => setState(() => _showGuestNameField = true),
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.slide.eyebrow != null) SlideEyebrow(text: widget.slide.eyebrow!),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    widget.slide.title,
+                    style: theme.textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    // The slide's own subtitle ("What should we call you?")
+                    // only makes sense once the guest name field is showing —
+                    // while the Google/Apple buttons are up, prompt for
+                    // sign-in instead.
+                    _showGuestNameField ? widget.slide.subtitle : 'Sign in to continue',
+                    style: theme.textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  if (_showGuestNameField)
+                    _GuestNameForm(
+                      nameController: widget.nameController,
+                      onNameChanged: widget.onNameChanged,
+                      isSubmitting: isSubmitting,
+                      onBack: () => setState(() => _showGuestNameField = false),
+                    )
+                  else
+                    _SignInOptions(isSubmitting: isSubmitting),
+                ],
               ),
-          ],
+            ),
+          ),
         ),
-      ),
+        // Pinned to the bottom of the screen (not the scrollable content)
+        // so it stays reachable as a "skip sign-in" option regardless of how
+        // tall the Apple/Google buttons above end up.
+        if (!_showGuestNameField)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              AppSpacing.md,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'OR',
+                  style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade400),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                SizedBox(
+                  width: double.infinity,
+                  child: NeoButton(
+                    onPressed:
+                        isSubmitting ? null : () => setState(() => _showGuestNameField = true),
+                    child: const Text('Continue as Guest'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
@@ -83,10 +121,9 @@ class _MarqueeNameCaptureSlideState extends State<MarqueeNameCaptureSlide> {
 enum _PendingProvider { google, apple }
 
 class _SignInOptions extends StatefulWidget {
-  const _SignInOptions({required this.isSubmitting, required this.onContinueAsGuest});
+  const _SignInOptions({required this.isSubmitting});
 
   final bool isSubmitting;
-  final VoidCallback onContinueAsGuest;
 
   @override
   State<_SignInOptions> createState() => _SignInOptionsState();
@@ -109,11 +146,37 @@ class _SignInOptionsState extends State<_SignInOptions> {
 
   @override
   Widget build(BuildContext context) {
+    // Sign in with Apple only has a real native flow on iOS/macOS (see
+    // SocialAuthConfig.oAuthRedirectUrl) — hidden on Android rather than
+    // falling back to a browser redirect there. Also shown on web so the
+    // button design can be previewed without an iOS device.
+    final showApple = kIsWeb ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+
     return Column(
       children: [
+        if (showApple) ...[
+          SizedBox(
+            width: double.infinity,
+            child: SignInWithAppleButton(
+              text: _pending == _PendingProvider.apple ? 'Signing in…' : 'Sign in with Apple',
+              onPressed: widget.isSubmitting
+                  ? () {}
+                  : () {
+                      setState(() => _pending = _PendingProvider.apple);
+                      context
+                          .read<OnboardingBloc>()
+                          .add(const OnboardingEvent.appleSignInRequested());
+                    },
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         SizedBox(
           width: double.infinity,
-          child: NeoButton(
+          child: _GoogleSignInButton(
+            isLoading: _pending == _PendingProvider.google,
             onPressed: widget.isSubmitting
                 ? null
                 : () {
@@ -122,37 +185,70 @@ class _SignInOptionsState extends State<_SignInOptions> {
                         .read<OnboardingBloc>()
                         .add(const OnboardingEvent.googleSignInRequested());
                   },
-            child: _pending == _PendingProvider.google
-                ? const SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator())
-                : const Text('Continue with Google'),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: NeoButton(
-            onPressed: widget.isSubmitting
-                ? null
-                : () {
-                    setState(() => _pending = _PendingProvider.apple);
-                    context
-                        .read<OnboardingBloc>()
-                        .add(const OnboardingEvent.appleSignInRequested());
-                  },
-            child: _pending == _PendingProvider.apple
-                ? const SizedBox(width: 20, height: 20, child: CupertinoActivityIndicator())
-                : const Text('Continue with Apple'),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: NeoButton(
-            onPressed: widget.isSubmitting ? null : widget.onContinueAsGuest,
-            child: const Text('Continue as Guest'),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// A "Sign in with Google" button following Google's branding guidelines:
+/// white background, grey outline, the official "G" mark, and "Sign in
+/// with Google" text in Roboto Medium.
+/// https://developers.google.com/identity/branding-guidelines
+class _GoogleSignInButton extends StatelessWidget {
+  const _GoogleSignInButton({required this.onPressed, required this.isLoading});
+
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  static const _height = 44.0;
+  static const _borderColor = Color(0xFF747775);
+  static const _textColor = Color(0xFF1F1F1F);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: _height,
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: onPressed,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: _borderColor, width: 1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: isLoading
+                      ? const CupertinoActivityIndicator()
+                      : SvgPicture.asset('assets/icons/google_logo.svg', width: 18, height: 18),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    isLoading ? 'Signing in…' : 'Sign in with Google',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: _textColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
