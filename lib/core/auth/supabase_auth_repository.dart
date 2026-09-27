@@ -102,10 +102,16 @@ class SupabaseAuthRepository implements AuthRepository {
           return const Left(ServerFailure('Apple sign-in did not return an ID token.'));
         }
 
+        // Apple is supposed to echo the hashed nonce we sent back as the
+        // id_token's `nonce` claim, but on some flows (e.g. a cached/
+        // quick-reauth Apple ID grant) it omits the claim entirely even
+        // though we requested one. Supabase's signInWithIdToken rejects the
+        // call if exactly one of "nonce param" / "nonce claim" is present,
+        // so only pass the raw nonce when the token actually carries one.
         await _client.auth.signInWithIdToken(
           provider: OAuthProvider.apple,
           idToken: idToken,
-          nonce: rawNonce,
+          nonce: _hasNonceClaim(idToken) ? rawNonce : null,
         );
 
         // Apple only ever sends the name on the very first sign-in for a
@@ -159,6 +165,17 @@ class SupabaseAuthRepository implements AuthRepository {
       return Left(ServerFailure(e.message));
     } on PostgrestException catch (e) {
       return Left(ServerFailure(e.message));
+    }
+  }
+
+  bool _hasNonceClaim(String jwt) {
+    try {
+      final payload = jwt.split('.')[1];
+      final normalized = base64Url.normalize(payload);
+      final claims = jsonDecode(utf8.decode(base64Url.decode(normalized))) as Map<String, dynamic>;
+      return claims.containsKey('nonce');
+    } catch (_) {
+      return false;
     }
   }
 }
